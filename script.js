@@ -139,18 +139,86 @@ const skolar = {
 // ============================================
 // RESOURCES DATA
 // ============================================
+function getBookPlatformLinks(title, author = "") {
+  const query = encodeURIComponent(`${title} ${author}`.trim());
+  const queryRafbok = encodeURIComponent(`${title} ${author} rafbók`.trim());
+
+  return [
+    {
+      label: "Spotify",
+      link: `https://open.spotify.com/search/${query}`
+    },
+    {
+      label: "Storytel",
+      link: `https://www.storytel.com/is/is/search?query=${query}`
+    },
+    {
+      label: "Audible",
+      link: `https://www.audible.com/search?keywords=${query}`
+    },
+    {
+      label: "Amazon",
+      link: `https://www.amazon.com/s?k=${query}`
+    },
+    {
+      label: "Rafbókasafnið",
+      link: `https://leitir.is/primo-explore/search?query=any,contains,${queryRafbok}&vid=ICE01`
+    },
+    {
+      label: "Bókasafnið",
+      link: `https://leitir.is/primo-explore/search?query=any,contains,${query}&vid=ICE01`
+    },
+    {
+      label: "Leitir.is",
+      link: `https://leitir.is/primo-explore/search?query=any,contains,${query}&vid=ICE01`
+    }
+  ];
+}
+
 const resources = [
   {
     type: "book", typeLabel: "Bók",
     title: "The Anxious Generation", author: "Jonathan Haidt",
     description: "Hvernig endurskipulagning æskuárinnar á snjallsímum og samfélagsmiðlum veldur farsótt geðsjúkdóma meðal ungmennis.",
-    link: "https://www.anxiousgeneration.com/"
+    link: "https://www.anxiousgeneration.com/",
+    tags: ["Geðheilsa", "Samfélagsmiðlar", "Foreldraráð"],
+    platformLinks: getBookPlatformLinks("The Anxious Generation", "Jonathan Haidt")
   },
   {
     type: "book", typeLabel: "Bók",
     title: "How to Break Up with Your Phone", author: "Catherine Price",
     description: "Hagnýt ráð til að taka aflið til baka frá snjallsímanum og lifa meðvitaðra með tækni.",
-    link: "https://www.catherineprice.com/books"
+    link: "https://www.catherineprice.com/books",
+    tags: ["Skjánotkun", "Athygli", "Dagleg venja"],
+    platformLinks: getBookPlatformLinks("How to Break Up with Your Phone", "Catherine Price")
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "Scattered Minds", author: "Gabor Maté",
+    description: "Um athyglisbrest, tilfinningar og hvernig tengslamyndun og umhverfi móta börn.",
+    tags: ["ADHD", "Tengslamyndun", "Geðheilsa"],
+    platformLinks: getBookPlatformLinks("Scattered Minds", "Gabor Maté")
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "Hold On to Your Kids", author: "Gordon Neufeld & Gabor Maté",
+    description: "Af hverju foreldratengsl skipta mestu máli og hvernig má styrkja þau í nútímasamfélagi.",
+    tags: ["Uppeldi", "Tengsl", "Félagsþrýstingur"],
+    platformLinks: getBookPlatformLinks("Hold On to Your Kids", "Gordon Neufeld Gabor Maté")
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "The Whole-Brain Child", author: "Daniel J. Siegel & Tina Payne Bryson",
+    description: "Hagnýtar leiðir fyrir foreldra til að styðja tilfinningaþroska og sjálfsstjórn barna.",
+    tags: ["Heilaþroski", "Tilfinningastjórnun", "Uppeldi"],
+    platformLinks: getBookPlatformLinks("The Whole-Brain Child", "Daniel J Siegel Tina Payne Bryson")
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "The Book You Wish Your Parents Had Read", author: "Philippa Perry",
+    description: "Bókin sem þú vildir að foreldrar þínir hefðu lesið — um samskipti, mörk og heilbrigð tengsl.",
+    tags: ["Foreldrahlutverkið", "Samskipti", "Mörk"],
+    platformLinks: getBookPlatformLinks("The Book You Wish Your Parents Had Read", "Philippa Perry")
   },
   {
     type: "research", typeLabel: "Rannsókn",
@@ -177,10 +245,30 @@ const resources = [
     link: "https://www.unesco.org/gem-report/en/technology"
   },
   {
+    type: "article", typeLabel: "Grein",
+    title: "WHO — Addictive behaviours: gaming disorder", author: "WHO",
+    description: "Yfirlit um ávanabindandi hegðun tengda skjánotkun og mikilvægi forvarna fyrir börn og ungmenni.",
+    link: "https://www.who.int/news-room/questions-and-answers/item/addictive-behaviours-gaming-disorder"
+  },
+  {
     type: "book", typeLabel: "Bók",
     title: "Stolen Focus", author: "Johann Hari",
     description: "Af hverju við getum ekki einbeitt okkur — og hvað við getum gert til að ná athyglinni til baka.",
-    link: "https://stolenfocusbook.com/"
+    link: "https://stolenfocusbook.com/",
+    tags: ["Athygli", "Skjáheimur", "Samfélag"],
+    platformLinks: getBookPlatformLinks("Stolen Focus", "Johann Hari")
+  },
+  {
+    type: "podcast", typeLabel: "Hlaðvarp",
+    title: "Viðring í uppeldi", author: "Spotify",
+    description: "Hlaðvarp um uppeldi og áskoranir foreldra í samtímanum.",
+    link: "https://open.spotify.com/search/vi%C3%B0ring%20%C3%AD%20uppeldi"
+  },
+  {
+    type: "podcast", typeLabel: "Hlaðvarp",
+    title: "Kvíðakynslóðin", author: "Spotify",
+    description: "Hlaðvarp um kvíða, geðheilsu barna og áhrif stafræns umhverfis.",
+    link: "https://open.spotify.com/search/kv%C3%AD%C3%B0akynsl%C3%B3%C3%B0in"
   },
   {
     type: "org", typeLabel: "Samtök",
@@ -233,19 +321,66 @@ function getSchoolsWithPledges() {
 // RENDER RESOURCES
 // ============================================
 const resourcesList = document.getElementById("resources-list");
-if (resourcesList) {
-  resources.forEach((res) => {
+const resourceFilterButtons = document.querySelectorAll(".resource-filter-btn");
+let currentResourceFilter = "all";
+
+function renderResources() {
+  if (!resourcesList) return;
+
+  const filteredResources =
+    currentResourceFilter === "all"
+      ? resources
+      : resources.filter((res) => res.type === currentResourceFilter);
+
+  resourcesList.innerHTML = "";
+
+  filteredResources.forEach((res) => {
     const card = document.createElement("article");
-    card.className = "resource-card fade-in";
+    card.className = "resource-card";
+    const tagsHtml = Array.isArray(res.tags) && res.tags.length
+      ? `<div class="resource-tags">${res.tags
+          .map((tag) => `<span class="resource-tag">${tag}</span>`)
+          .join("")}</div>`
+      : "";
+
+    const links = Array.isArray(res.platformLinks) && res.platformLinks.length
+      ? res.platformLinks
+      : res.link
+        ? [{ label: "Skoða nánar", link: res.link }]
+        : [];
+
+    const linksHtml = links.length
+      ? `<div class="resource-links">${links
+          .map(
+            (item) =>
+              `<a href="${item.link}" target="_blank" rel="noopener">${item.label}</a>`
+          )
+          .join("")}</div>`
+      : "";
+
     card.innerHTML = `
       <span class="resource-type ${res.type}">${res.typeLabel}</span>
       <h3>${res.title}</h3>
       <p><em>${res.author}</em> — ${res.description}</p>
-      <a href="${res.link}" target="_blank" rel="noopener">Skoða nánar →</a>
+      ${tagsHtml}
+      ${linksHtml}
     `;
     resourcesList.appendChild(card);
   });
 }
+
+if (resourceFilterButtons.length) {
+  resourceFilterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      currentResourceFilter = button.dataset.resourceFilter || "all";
+      resourceFilterButtons.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+      renderResources();
+    });
+  });
+}
+
+renderResources();
 
 // ============================================
 // YEAR IN FOOTER
