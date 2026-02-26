@@ -28,7 +28,7 @@ const skolar = {
     "Skólabrú", "Bakkaskóli", "Ferstikla"
   ],
   "Garðabær": [
-    "Álftanesskóli", "Garðaskóli", "Flataskóli", "Hoflandaskóli"
+    "Álftanesskóli", "Garðaskóli", "Flataskóli", "Hoflandaskóli", "Sjálandsskóli"
   ],
   "Mosfellsbær": [
     "Varmárskóli", "Helgafellsskóli", "Krikaskóli"
@@ -281,7 +281,9 @@ const resources = [
 // ============================================
 // PLEDGE DATA (localStorage)
 // ============================================
-function getPledgeData() {
+const apiBaseUrl = window.location.origin;
+
+function getLocalPledgeData() {
   try {
     return JSON.parse(localStorage.getItem("bidum-pledges") || "[]");
   } catch {
@@ -289,17 +291,64 @@ function getPledgeData() {
   }
 }
 
+let pledgeCache = getLocalPledgeData();
+
+function getPledgeData() {
+  return pledgeCache;
+}
+
 function savePledgeData(data) {
+  pledgeCache = data;
   localStorage.setItem("bidum-pledges", JSON.stringify(data));
+}
+
+async function syncPledgeToServer(pledge) {
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/pledges`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(pledge)
+    });
+
+    if (!response.ok) {
+      const result = await response.json().catch(() => ({}));
+      if (response.status === 409 && result.error) {
+        showToast(result.error);
+      }
+    }
+  } catch {
+    // local fallback remains available
+  }
+}
+
+async function hydratePledgesFromServer() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/pledges`);
+    if (!response.ok) return;
+
+    const serverPledges = await response.json();
+    if (!Array.isArray(serverPledges)) return;
+
+    savePledgeData(serverPledges);
+    updateTotals();
+    renderSchoolDirectory();
+  } catch {
+    // local fallback remains available
+  }
 }
 
 function addPledge(pledge) {
   const data = getPledgeData();
-  data.push({
+  const savedPledge = {
     ...pledge,
     timestamp: new Date().toISOString()
-  });
+  };
+
+  data.push(savedPledge);
   savePledgeData(data);
+  syncPledgeToServer(savedPledge);
   return data;
 }
 
@@ -594,6 +643,7 @@ function updateTotals() {
 }
 
 updateTotals();
+hydratePledgesFromServer();
 
 // ============================================
 // SCHOOL DIRECTORY

@@ -633,6 +633,68 @@ img {
 }
 
 /* ============================================
+   PUBLIC PETITION
+   ============================================ */
+.section-public-petition {
+  background: var(--surface);
+}
+
+.petition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 1rem;
+}
+
+.petition-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+  background: var(--surface);
+}
+
+.petition-card-secondary {
+  background: var(--surface-soft);
+}
+
+.petition-status {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  margin-bottom: 0.6rem;
+}
+
+.petition-status.in-progress {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.petition-status.planned {
+  background: var(--accent-light);
+  color: var(--accent-deep);
+}
+
+.petition-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.petition-card p {
+  margin: 0 0 0.9rem;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+}
+
+.petition-note {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+/* ============================================
    JOIN SECTION
    ============================================ */
 .section-join {
