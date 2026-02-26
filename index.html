@@ -35,9 +35,9 @@
           <ul class="nav-links">
             <li><a href="#af-hverju">Af hverju?</a></li>
             <li><a href="#gervigreind">Gervigreind</a></li>
-            <li><a href="#heimildir">Heimildir</a></li>
             <li><a href="#radleggingar">Ráðleggingar</a></li>
-            <li><a class="cta-link" href="#taka-thatt">Taka þátt</a></li>
+            <li><a href="#skolar">Skólar</a></li>
+            <li><a class="cta-link" href="#skrifa-undir">Skrifa undir</a></li>
           </ul>
         </nav>
       </div>
@@ -57,7 +57,7 @@
               stöðugs skjáþrýstings, gervigreindarsíunar og samanburðar á netinu.
             </p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="#taka-thatt">Skráðu þig</a>
+              <a class="btn btn-primary" href="#skrifa-undir">Skrifa undir</a>
               <a class="btn btn-secondary" href="#af-hverju">Læra meira</a>
             </div>
           </div>
@@ -289,41 +289,195 @@
         </div>
       </section>
 
+      <!-- ==================== HVERNIG VIRKAR ÞETTA ==================== -->
+      <section class="section how-it-works">
+        <div class="container">
+          <div class="section-head">
+            <h2>Hvernig virkar þetta?</h2>
+            <p>
+              Eins og „Wait Until 8th" í Bandaríkjunum — foreldrar í sama skóla
+              og bekk skrifa saman undir viljayfirlýsingu. Þegar nógu margir
+              taka þátt, breytist normið.
+            </p>
+          </div>
+          <div class="steps-grid">
+            <div class="step">
+              <div class="step-number">1</div>
+              <h3>Veldu skólann þinn</h3>
+              <p>Finndu grunnskóla barnsins þíns af listanum yfir alla grunnskóla á Íslandi.</p>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <h3>Skrifaðu undir</h3>
+              <p>Fyllt er út nafn, netfang, skóli og bekkur. Þú heitir að seinka snjallsíma og samfélagsmiðlum.</p>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <h3>Bekkurinn fyllist</h3>
+              <p>Eftir því sem fleiri foreldrar skrifa undir í sama bekk, styrkist samfélagið — og þrýstingurinn minnkar.</p>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <h3>Normið breytist</h3>
+              <p>Þegar meirihluti foreldra í bekk hefur skrifað undir, verður auðveldara fyrir alla að halda börnunum frá snjallsímum.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SKRIFA UNDIR ==================== -->
+      <section id="skrifa-undir" class="section section-pledge-form">
+        <div class="container">
+          <div class="section-head">
+            <h2>Skrifaðu undir viljayfirlýsinguna ✍️</h2>
+            <p>
+              „Ég heiti því að gefa barninu mínu tíma til að vaxa, leika og vera barn
+              — án snjallsíma og samfélagsmiðla á grunnskólaaldri. Ég styð önnur
+              foreldri í sama skóla og bekk í sömu vegferð."
+            </p>
+          </div>
+
+          <div class="pledge-form-container">
+            <form class="pledge-form" id="pledge-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="pledge-name">Nafn foreldris / forráðamanns</label>
+                  <input
+                    type="text"
+                    id="pledge-name"
+                    name="name"
+                    placeholder="t.d. Jón Jónsson"
+                    required
+                    autocomplete="name"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="pledge-email">Netfang</label>
+                  <input
+                    type="email"
+                    id="pledge-email"
+                    name="email"
+                    placeholder="jon@dæmi.is"
+                    required
+                    autocomplete="email"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="pledge-sveitarfelag">Sveitarfélag</label>
+                  <select id="pledge-sveitarfelag" name="sveitarfelag" required>
+                    <option value="">— Veldu sveitarfélag —</option>
+                    <!-- Populated by JS -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="pledge-school">Grunnskóli</label>
+                  <select id="pledge-school" name="school" required disabled>
+                    <option value="">— Veldu skóla —</option>
+                    <!-- Populated by JS based on sveitarfélag -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="pledge-grade">Bekkur barns</label>
+                  <select id="pledge-grade" name="grade" required>
+                    <option value="">— Veldu bekk —</option>
+                    <option value="1">1. bekkur</option>
+                    <option value="2">2. bekkur</option>
+                    <option value="3">3. bekkur</option>
+                    <option value="4">4. bekkur</option>
+                    <option value="5">5. bekkur</option>
+                    <option value="6">6. bekkur</option>
+                    <option value="7">7. bekkur</option>
+                    <option value="8">8. bekkur</option>
+                    <option value="9">9. bekkur</option>
+                    <option value="10">10. bekkur</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="pledge-child-name">Nafn barns (valfrjálst)</label>
+                  <input
+                    type="text"
+                    id="pledge-child-name"
+                    name="child-name"
+                    placeholder="Valfrjálst"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+
+              <div class="pledge-agreement">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="pledge-agree" required />
+                  <span>
+                    Ég samþykki að nafn mitt og skóli birtist á lista yfir
+                    foreldra sem hafa skrifað undir (netfang birtist aldrei).
+                  </span>
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg pledge-submit">
+                Skrifa undir viljayfirlýsinguna 🛡️
+              </button>
+
+              <p class="form-note">
+                Við deilum aldrei netfanginu þínu. Þú getur afskráð þig hvenær sem er.
+              </p>
+            </form>
+          </div>
+
+          <!-- Live counters -->
+          <div class="pledge-totals" id="pledge-totals">
+            <div class="total-box">
+              <span class="total-number" id="total-pledges">0</span>
+              <span class="total-label">foreldrar hafa skrifað undir á landsvísu</span>
+            </div>
+            <div class="total-box">
+              <span class="total-number" id="total-schools">0</span>
+              <span class="total-label">grunnskólar eru með undirskriftir</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SKÓLALEIT ==================== -->
+      <section id="skolar" class="section section-alt">
+        <div class="container">
+          <div class="section-head">
+            <h2>Finndu skólann þinn 🏫</h2>
+            <p>
+              Skoðaðu hvaða skólar eru komnir með undirskriftir og hversu
+              margir foreldrar í hverjum bekk hafa tekið þátt.
+            </p>
+          </div>
+
+          <div class="school-search-bar">
+            <input
+              type="text"
+              id="school-search"
+              placeholder="Leita að skóla eða sveitarfélagi..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="school-filter-bar" id="sveitarfelag-filters">
+            <button class="filter-btn active" data-filter="all">Öll sveitarfélög</button>
+            <!-- Populated by JS -->
+          </div>
+
+          <div class="school-directory" id="school-directory">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
       <!-- ==================== TAKA ÞÁTT ==================== -->
       <section id="taka-thatt" class="section section-join">
         <div class="container">
           <div class="join-content">
-            <h2>Vertu með okkur 💛</h2>
+            <h2>Vertu í hreyfingunni 💛</h2>
             <p>
               Bíðum Betur er opinn hópur — enginn dómur, bara stuðningur.
-              Skráðu þig á póstlistann okkar til að fá fréttir, ráðleggingar
-              og upplýsingar um viðburði.
+              Deildu skilaboðunum og vertu með í samfélaginu.
             </p>
-            <form class="signup-form" id="signup-form">
-              <div class="form-row">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Nafnið þitt"
-                  required
-                  autocomplete="given-name"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Netfangið þitt"
-                  required
-                  autocomplete="email"
-                />
-                <button type="submit" class="btn btn-primary">
-                  Skrá mig
-                </button>
-              </div>
-              <p class="form-note">
-                Við deilum aldrei netfanginu þínu. Þú getur afskráð þig
-                hvenær sem er.
-              </p>
-            </form>
             <div class="join-actions">
               <div class="join-option">
                 <span class="join-icon">📱</span>
@@ -347,27 +501,6 @@
           </div>
         </div>
       </section>
-
-      <!-- ==================== PLEDGE ==================== -->
-      <section class="section pledge-section">
-        <div class="container">
-          <div class="pledge-box">
-            <h2>Heitið okkar 🌱</h2>
-            <blockquote>
-              „Ég heiti því að gefa barninu mínu tíma til að vaxa, leika
-              og vera barn — án snjallsíma og samfélagsmiðla þar til við
-              erum tilbúin saman. Ég styð önnur foreldri í sömu vegferð."
-            </blockquote>
-            <div class="pledge-counter">
-              <span class="pledge-number" id="pledge-count">0</span>
-              <span>foreldrar hafa tekið heitið</span>
-            </div>
-            <button class="btn btn-primary btn-lg" id="pledge-btn">
-              Ég tek heitið
-            </button>
-          </div>
-        </div>
-      </section>
     </main>
 
     <!-- ==================== FOOTER ==================== -->
@@ -387,8 +520,8 @@
               <li><a href="#af-hverju">Af hverju?</a></li>
               <li><a href="#gervigreind">Gervigreind</a></li>
               <li><a href="#radleggingar">Ráðleggingar</a></li>
-              <li><a href="#heimildir">Heimildir</a></li>
-              <li><a href="#taka-thatt">Taka þátt</a></li>
+              <li><a href="#skolar">Skólar</a></li>
+              <li><a href="#skrifa-undir">Skrifa undir</a></li>
             </ul>
           </div>
           <div class="footer-contact">
