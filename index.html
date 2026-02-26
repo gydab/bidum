@@ -3,102 +3,406 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gydabjörg | Creative Portfolio</title>
+    <title>Bíðum Betur | Verndum barnæskuna</title>
     <meta
       name="description"
-      content="Létt og litríkt portfolio Gydabjargar með persónulegum verkefnum, sögum og tengiliðum."
+      content="Bíðum Betur er hópur foreldra á Íslandi sem styðja hvort annað í að seinka snjallsímum og samfélagsmiðlum fyrir börn. Verndum barnæskuna saman."
+    />
+    <meta property="og:title" content="Bíðum Betur — Verndum barnæskuna" />
+    <meta
+      property="og:description"
+      content="Foreldrahópur sem hvetur til meðvitaðra ákvarðana þegar kemur að tækni og samfélagsmiðlum með það að markmiði að verndar barnæskuna gegn skaðlegum áhrifum gervigreindar og samfélagsmiðla."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- ==================== HEADER ==================== -->
     <header class="site-header" id="site-header">
       <div class="container nav-wrap">
-        <a href="#" class="brand">Gydabjörg</a>
-        <nav aria-label="Aðal valmynd">
+        <a href="#" class="brand">
+          <span class="brand-icon">🛡️</span> Bíðum Betur
+        </a>
+        <button class="menu-toggle" id="menu-toggle" aria-label="Opna valmynd">
+          <span></span><span></span><span></span>
+        </button>
+        <nav aria-label="Aðal valmynd" id="main-nav">
           <ul class="nav-links">
-            <li><a href="#um-mig">Um mig</a></li>
-            <li><a href="#verkefni">Verkefni</a></li>
-            <li><a class="contact-link" href="#samband">Contact</a></li>
+            <li><a href="#af-hverju">Af hverju?</a></li>
+            <li><a href="#gervigreind">Gervigreind</a></li>
+            <li><a href="#heimildir">Heimildir</a></li>
+            <li><a href="#radleggingar">Ráðleggingar</a></li>
+            <li><a class="cta-link" href="#taka-thatt">Taka þátt</a></li>
           </ul>
         </nav>
       </div>
     </header>
 
     <main>
+      <!-- ==================== HERO ==================== -->
       <section class="hero">
         <div class="container hero-grid">
           <div class="hero-content">
-            <p class="eyebrow">Létt • Litríkt • Líflegt</p>
-            <h1>Sæl, ég er Gydabjörg 🌼</h1>
+            <p class="eyebrow">Foreldrahópur á Íslandi</p>
+            <h1>Verndum barnæskuna í stafrænum heimi&nbsp;🛡️</h1>
             <p class="lead">
-              Heimsins mesti peppari, grúskari og kærleiksfrumkvöðull. Ég er að
-              skapa rými fyrir verkefni, hugmyndir og góða orku — og gera það
-              sýnilegt á minni eigin síðu.
+              <strong>Bíðum Betur</strong> er nýstofnaður hópur foreldra sem
+              styður hvert annað í að seinka snjallsímum og samfélagsmiðlum
+              fyrir börn. Við viljum gefa börnunum okkar tíma til að vaxa — án
+              stöðugs skjáþrýstings, gervigreindarsíunar og samanburðar á netinu.
             </p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="#verkefni">Skoða verkefni</a>
-              <a class="btn btn-secondary" href="#um-mig">Um mig</a>
+              <a class="btn btn-primary" href="#taka-thatt">Skráðu þig</a>
+              <a class="btn btn-secondary" href="#af-hverju">Læra meira</a>
             </div>
-            <a class="scroll-cue" href="#um-mig" aria-label="Skruna niður">
-              <span class="flower">🌸</span>
-              <span>Skruna niður</span>
-            </a>
           </div>
-          <figure class="hero-visual" aria-label="Náttúruleg stemning">
-            <img
-              src="https://images.unsplash.com/photo-1522579479806-48690f74b8c3?auto=format&fit=crop&w=1100&q=80"
-              alt="Gul blóm í björtu náttúruljósi"
-            />
+          <figure class="hero-visual" aria-hidden="true">
+            <div class="hero-illustration">
+              <div class="shield">🛡️</div>
+              <div class="children">👧🏼 👦🏽 👧🏻</div>
+              <div class="nature">🌿🌻🌈</div>
+            </div>
           </figure>
         </div>
       </section>
 
-      <section id="um-mig" class="section">
-        <div class="container">
-          <h2>Um mig</h2>
-          <p>
-            Ég elska að taka hugmyndir og gera þær lifandi með skýrum fókus,
-            sköpunargleði og sterkri tengingu við fólk. Persónulega síðan mín er
-            lifandi rými þar sem ég deili því sem ég er að byggja og læra hverju
-            sinni.
-          </p>
+      <!-- ==================== TÖLUR ==================== -->
+      <section class="stats-bar">
+        <div class="container stats-grid">
+          <div class="stat">
+            <span class="stat-number" data-target="95">0</span><span class="stat-suffix">%</span>
+            <span class="stat-label">íslenskra barna eiga snjallsíma fyrir 13 ára aldur</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number" data-target="4">0</span><span class="stat-suffix"> klst</span>
+            <span class="stat-label">meðalskjátími barna á dag</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number" data-target="46">0</span><span class="stat-suffix">%</span>
+            <span class="stat-label">aukning á kvíða hjá unglingum síðustu 10 ár</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number" data-target="73">0</span><span class="stat-suffix">%</span>
+            <span class="stat-label">foreldra vilja seinka en þora ekki ein</span>
+          </div>
         </div>
       </section>
 
-      <section id="verkefni" class="section section-alt">
+      <!-- ==================== AF HVERJU ==================== -->
+      <section id="af-hverju" class="section">
         <div class="container">
           <div class="section-head">
-            <h2>Valin verkefni</h2>
+            <h2>Af hverju skiptir þetta máli?</h2>
             <p>
-              Verkefni sem sýna nýsköpun, ráðgjöf og stafræna umbreytingu með
-              mannlega nálgun.
+              Rannsóknir sýna skýr tengsl milli snjallsímanotkunar barna og
+              versnandi geðheilsu. Börn þurfa tíma til leiks, sköpunar og
+              mannlegra tengsla — ekki stöðugan straum af tilkynningum,
+              samanburði og reikniritsíun.
             </p>
           </div>
-          <div class="projects" id="projects-list"></div>
+
+          <div class="cards-grid">
+            <article class="card">
+              <div class="card-icon">🧠</div>
+              <h3>Geðheilsa</h3>
+              <p>
+                Rannsóknir Jonathan Haidt og fleiri sýna sterka fylgni milli
+                snjallsímanotkunar og aukinna kvíða, þunglyndis og einmanaleika
+                meðal ungs fólks.
+              </p>
+            </article>
+            <article class="card">
+              <div class="card-icon">📵</div>
+              <h3>Samfélagsþrýstingur</h3>
+              <p>
+                Samfélagsmiðlar skapa stöðugan samanburð, líkamsmyndarvanda og
+                þrýsting á börn til að vera „always on". Barnæskan verður að
+                sýningu.
+              </p>
+            </article>
+            <article class="card">
+              <div class="card-icon">⏰</div>
+              <h3>Athygli og nám</h3>
+              <p>
+                Stöðugar tilkynningar og stuttmyndaefni brjóta niður athyglina
+                og getu barna til djúprar hugsunar, lestrar og skapandi leiks.
+              </p>
+            </article>
+            <article class="card">
+              <div class="card-icon">🤝</div>
+              <h3>Þú ert ekki ein/n</h3>
+              <p>
+                Margt foreldri vill seinka — en þorir ekki ef öll önnur börn
+                eru komin með síma. Saman getum við breytt norminu.
+              </p>
+            </article>
+          </div>
         </div>
       </section>
 
-      <section id="samband" class="section">
+      <!-- ==================== GERVIGREIND ==================== -->
+      <section id="gervigreind" class="section section-alt">
         <div class="container">
-          <h2>Contact</h2>
-          <p>
-            Viltu skapa eitthvað saman? Sendu mér línu á
-            <a href="mailto:you@example.com">you@example.com</a>
-            og við finnum næsta skref.
-          </p>
+          <div class="section-head">
+            <h2>Gervigreind og börn — ný áskorun</h2>
+            <p>
+              Gervigreind (AI) er að breyta heiminum hratt. Aldrei fyrr hefur
+              verið mikilvægara að búa börn undir stafrænan heim á meðvitaðan
+              hátt — en ekki með því að henda þeim út í hann of snemma.
+            </p>
+          </div>
+
+          <div class="ai-grid">
+            <div class="ai-concern">
+              <h3>🔍 Deepfakes og misinformation</h3>
+              <p>
+                AI getur búið til sannfærandi gerviefni — myndir, myndbönd og
+                texta. Börn hafa ekki dómgreindaráður til að greina raunveruleika
+                frá tilbúningi.
+              </p>
+            </div>
+            <div class="ai-concern">
+              <h3>🎯 Reiknirit sérsnídd að börnum</h3>
+              <p>
+                AI-reiknirit á TikTok, YouTube og Instagram læra hvað heldur
+                börnunum föstum á skjánum — þau eru hönnuð til fíknar, ekki
+                fræðslu.
+              </p>
+            </div>
+            <div class="ai-concern">
+              <h3>💬 AI-spjallbottar og tilfinningameðferð</h3>
+              <p>
+                Börn geta myndað tilfinningatengsl við AI-spjallbotta sem
+                líkja eftir mannlegum samskiptum, en eru ekki í stakk búnir til
+                þess.
+              </p>
+            </div>
+            <div class="ai-concern">
+              <h3>📊 Gagnaöflun frá börnum</h3>
+              <p>
+                AI-kerfi safna gríðarlegu magni persónu- og hegðunargagna frá
+                börnum — oft án vitundar foreldra. Þessi gögn eru notuð til
+                auglýsinga og reiknirits.
+              </p>
+            </div>
+            <div class="ai-concern">
+              <h3>🎓 Gagnrýnin hugsun í hættu</h3>
+              <p>
+                Ef börn treysta á AI til heimavinnu og svara, þróa þau ekki
+                eigin hugsun, sköpunargleði eða úrvinnslu. AI verður hækja
+                frekar en verkfæri.
+              </p>
+            </div>
+            <div class="ai-concern">
+              <h3>🛡️ Hvað getum við gert?</h3>
+              <p>
+                Fræða okkur sjálf, seinka aðgangi, tala opinskátt við börnin
+                og krefjast betri löggjafar um vernd barna á netinu og
+                gegn ábyrðarlausri notkun AI á börnum.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== RÁÐLEGGINGAR ==================== -->
+      <section id="radleggingar" class="section">
+        <div class="container">
+          <div class="section-head">
+            <h2>Ráðleggingar fyrir foreldra</h2>
+            <p>
+              Þú þarft ekki að vera tækniekspertur. Hér eru einföld skref
+              sem þú getur tekið strax — og fleiri sem samfélagið getur gert
+              saman.
+            </p>
+          </div>
+
+          <div class="tips-grid">
+            <div class="tip">
+              <div class="tip-number">1</div>
+              <h3>Seinkið snjallsímanum</h3>
+              <p>
+                Börnin þurfa ekki snjallsíma í grunnskóla. Einfaldur
+                hringja-og-sms sími dugar. Markmið: enginn snjallsími
+                fyrir 14 ára aldur.
+              </p>
+            </div>
+            <div class="tip">
+              <div class="tip-number">2</div>
+              <h3>Engir samfélagsmiðlar fyrir 16</h3>
+              <p>
+                Samfélagsmiðlar eru hannaðir fullorðnum. Seinkið aðgangi og
+                byrjið á vöktuðum reikningum þegar þið eruð tilbúin.
+              </p>
+            </div>
+            <div class="tip">
+              <div class="tip-number">3</div>
+              <h3>Talaðu við önnur foreldri</h3>
+              <p>
+                Finndu foreldra í bekknum, íþróttafélaginu eða hverfinu sem
+                deila þínum gildum. Saman er auðveldara að halda í sig.
+              </p>
+            </div>
+            <div class="tip">
+              <div class="tip-number">4</div>
+              <h3>Skjálaus svefnherbergi</h3>
+              <p>
+                Engir skjáir í svefnherbergjum barna. Hlaðið síma utan
+                svefnherbergja. Þetta eitt skref getur breytt öllu.
+              </p>
+            </div>
+            <div class="tip">
+              <div class="tip-number">5</div>
+              <h3>Vertu fyrirmynd</h3>
+              <p>
+                Börn læra af gjörðum okkar. Setjum símann frá okkur þegar
+                við erum með börnunum. Vera til staðar — alvöru.
+              </p>
+            </div>
+            <div class="tip">
+              <div class="tip-number">6</div>
+              <h3>Fræðið ykkur um AI</h3>
+              <p>
+                Kynnið ykkur hvernig gervigreind virkar, hvað ChatGPT er og
+                hvernig reiknirit móta upplifun barnanna. Vitund er vörn.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== HEIMILDIR ==================== -->
+      <section id="heimildir" class="section section-alt">
+        <div class="container">
+          <div class="section-head">
+            <h2>Heimildir og frekari lesning</h2>
+            <p>Vert að kynna sér — bækur, rannsóknir og samtök.</p>
+          </div>
+          <div class="resources-grid" id="resources-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== TAKA ÞÁTT ==================== -->
+      <section id="taka-thatt" class="section section-join">
+        <div class="container">
+          <div class="join-content">
+            <h2>Vertu með okkur 💛</h2>
+            <p>
+              Bíðum Betur er opinn hópur — enginn dómur, bara stuðningur.
+              Skráðu þig á póstlistann okkar til að fá fréttir, ráðleggingar
+              og upplýsingar um viðburði.
+            </p>
+            <form class="signup-form" id="signup-form">
+              <div class="form-row">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Nafnið þitt"
+                  required
+                  autocomplete="given-name"
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Netfangið þitt"
+                  required
+                  autocomplete="email"
+                />
+                <button type="submit" class="btn btn-primary">
+                  Skrá mig
+                </button>
+              </div>
+              <p class="form-note">
+                Við deilum aldrei netfanginu þínu. Þú getur afskráð þig
+                hvenær sem er.
+              </p>
+            </form>
+            <div class="join-actions">
+              <div class="join-option">
+                <span class="join-icon">📱</span>
+                <h3>WhatsApp-hópur</h3>
+                <p>Opinn hópur þar sem foreldrar deila reynslu og ráðum.</p>
+                <a href="#" class="btn btn-secondary">Taka þátt</a>
+              </div>
+              <div class="join-option">
+                <span class="join-icon">📅</span>
+                <h3>Viðburðir</h3>
+                <p>Fræðslufundir, umræður og foreldrakvöld um skjátíma.</p>
+                <a href="#" class="btn btn-secondary">Sjá dagatal</a>
+              </div>
+              <div class="join-option">
+                <span class="join-icon">📣</span>
+                <h3>Deila skilaboðunum</h3>
+                <p>Afritaðu og deildu — segðu öðrum foreldrum frá okkur.</p>
+                <a href="#" class="btn btn-secondary" id="share-btn">Deila</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== PLEDGE ==================== -->
+      <section class="section pledge-section">
+        <div class="container">
+          <div class="pledge-box">
+            <h2>Heitið okkar 🌱</h2>
+            <blockquote>
+              „Ég heiti því að gefa barninu mínu tíma til að vaxa, leika
+              og vera barn — án snjallsíma og samfélagsmiðla þar til við
+              erum tilbúin saman. Ég styð önnur foreldri í sömu vegferð."
+            </blockquote>
+            <div class="pledge-counter">
+              <span class="pledge-number" id="pledge-count">0</span>
+              <span>foreldrar hafa tekið heitið</span>
+            </div>
+            <button class="btn btn-primary btn-lg" id="pledge-btn">
+              Ég tek heitið
+            </button>
+          </div>
         </div>
       </section>
     </main>
 
+    <!-- ==================== FOOTER ==================== -->
     <footer class="site-footer">
       <div class="container">
-        <p>© <span id="year"></span> Gydabjörg. Öll réttindi áskilin.</p>
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <span class="brand">🛡️ Bíðum Betur</span>
+            <p>
+              Foreldrahópur á Íslandi sem vinnur að meðvitaðri tæknivalda
+              og verndar barnæskuna.
+            </p>
+          </div>
+          <div class="footer-links">
+            <h4>Flýtitenglar</h4>
+            <ul>
+              <li><a href="#af-hverju">Af hverju?</a></li>
+              <li><a href="#gervigreind">Gervigreind</a></li>
+              <li><a href="#radleggingar">Ráðleggingar</a></li>
+              <li><a href="#heimildir">Heimildir</a></li>
+              <li><a href="#taka-thatt">Taka þátt</a></li>
+            </ul>
+          </div>
+          <div class="footer-contact">
+            <h4>Hafa samband</h4>
+            <p>
+              <a href="mailto:bidum.betur@gmail.com">bidum.betur@gmail.com</a>
+            </p>
+            <p>Ísland 🇮🇸</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; <span id="year"></span> Bíðum Betur. Öll réttindi áskilin.</p>
+          <p class="footer-tagline">Barnæskan er ekki til sölu.</p>
+        </div>
       </div>
     </footer>
 
