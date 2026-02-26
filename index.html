@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="is">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gydabjörg | Creative Portfolio</title>
+    <meta
+      name="description"
+      content="Létt og litríkt portfolio Gydabjargar með persónulegum verkefnum, sögum og tengiliðum."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" id="site-header">
+      <div class="container nav-wrap">
+        <a href="#" class="brand">Gydabjörg</a>
+        <nav aria-label="Aðal valmynd">
+          <ul class="nav-links">
+            <li><a href="#um-mig">Um mig</a></li>
+            <li><a href="#verkefni">Verkefni</a></li>
+            <li><a class="contact-link" href="#samband">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-content">
+            <p class="eyebrow">Létt • Litríkt • Líflegt</p>
+            <h1>Sæl, ég er Gydabjörg 🌼</h1>
+            <p class="lead">
+              Heimsins mesti peppari, grúskari og kærleiksfrumkvöðull. Ég er að
+              skapa rými fyrir verkefni, hugmyndir og góða orku — og gera það
+              sýnilegt á minni eigin síðu.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#verkefni">Skoða verkefni</a>
+              <a class="btn btn-secondary" href="#um-mig">Um mig</a>
+            </div>
+            <a class="scroll-cue" href="#um-mig" aria-label="Skruna niður">
+              <span class="flower">🌸</span>
+              <span>Skruna niður</span>
+            </a>
+          </div>
+          <figure class="hero-visual" aria-label="Náttúruleg stemning">
+            <img
+              src="https://images.unsplash.com/photo-1522579479806-48690f74b8c3?auto=format&fit=crop&w=1100&q=80"
+              alt="Gul blóm í björtu náttúruljósi"
+            />
+          </figure>
+        </div>
+      </section>
+
+      <section id="um-mig" class="section">
+        <div class="container">
+          <h2>Um mig</h2>
+          <p>
+            Ég elska að taka hugmyndir og gera þær lifandi með skýrum fókus,
+            sköpunargleði og sterkri tengingu við fólk. Persónulega síðan mín er
+            lifandi rými þar sem ég deili því sem ég er að byggja og læra hverju
+            sinni.
+          </p>
+        </div>
+      </section>
+
+      <section id="verkefni" class="section section-alt">
+        <div class="container">
+          <div class="section-head">
+            <h2>Valin verkefni</h2>
+            <p>
+              Verkefni sem sýna nýsköpun, ráðgjöf og stafræna umbreytingu með
+              mannlega nálgun.
+            </p>
+          </div>
+          <div class="projects" id="projects-list"></div>
+        </div>
+      </section>
+
+      <section id="samband" class="section">
+        <div class="container">
+          <h2>Contact</h2>
+          <p>
+            Viltu skapa eitthvað saman? Sendu mér línu á
+            <a href="mailto:you@example.com">you@example.com</a>
+            og við finnum næsta skref.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© <span id="year"></span> Gydabjörg. Öll réttindi áskilin.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
