@@ -139,40 +139,23 @@ const skolar = {
 // ============================================
 // RESOURCES DATA
 // ============================================
-function getBookPlatformLinks(title, author = "") {
-  const query = encodeURIComponent(`${title} ${author}`.trim());
-  const queryRafbok = encodeURIComponent(`${title} ${author} rafbók`.trim());
-
-  return [
-    {
-      label: "Spotify",
-      link: `https://open.spotify.com/search/${query}`
-    },
-    {
-      label: "Storytel",
-      link: `https://www.storytel.com/is/is/search?query=${query}`
-    },
-    {
-      label: "Audible",
-      link: `https://www.audible.com/search?keywords=${query}`
-    },
-    {
-      label: "Amazon",
-      link: `https://www.amazon.com/s?k=${query}`
-    },
-    {
-      label: "Rafbókasafnið",
-      link: `https://leitir.is/primo-explore/search?query=any,contains,${queryRafbok}&vid=ICE01`
-    },
-    {
-      label: "Bókasafnið",
-      link: `https://leitir.is/primo-explore/search?query=any,contains,${query}&vid=ICE01`
-    },
-    {
-      label: "Leitir.is",
-      link: `https://leitir.is/primo-explore/search?query=any,contains,${query}&vid=ICE01`
-    }
+function getBookPlatformLinks(_title, _author = "", directLinks = {}) {
+  const orderedLabels = [
+    "Spotify",
+    "Storytel",
+    "Audible",
+    "Amazon",
+    "Rafbókasafnið",
+    "Bókasafnið",
+    "Leitir.is"
   ];
+
+  return orderedLabels
+    .filter((label) => Boolean(directLinks[label]))
+    .map((label) => ({
+      label,
+      link: directLinks[label]
+    }));
 }
 
 const resources = [
@@ -197,7 +180,9 @@ const resources = [
     title: "Scattered Minds", author: "Gabor Maté",
     description: "Um athyglisbrest, tilfinningar og hvernig tengslamyndun og umhverfi móta börn.",
     tags: ["ADHD", "Tengslamyndun", "Geðheilsa"],
-    platformLinks: getBookPlatformLinks("Scattered Minds", "Gabor Maté")
+    platformLinks: getBookPlatformLinks("Scattered Minds", "Gabor Maté", {
+      Rafbókasafnið: "https://rafbokasafnid.overdrive.com/media/4251242"
+    })
   },
   {
     type: "book", typeLabel: "Bók",

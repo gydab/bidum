@@ -162,6 +162,13 @@
 - Leitir.is
 - Skoða nánar
 
+Athugið: Ekki birta sjálfvirkar leitarniðurstöðuslóðir á miðlum. Nota aðeins beinar slóðir á bók/efni þegar þær liggja fyrir.
+
+### Beinir bókahlekkir (þar sem þeir eru þekktir)
+
+- Scattered Minds — Rafbókasafnið:
+  - https://rafbokasafnid.overdrive.com/media/4251242
+
 ## Hvernig virkar þetta?
 
 - Eins og „Wait Until 8th" í Bandaríkjunum — foreldrar í sama skóla og bekk skrifa saman undir viljayfirlýsingu. Þegar nógu margir taka þátt, breytist normið.
