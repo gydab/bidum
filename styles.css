@@ -505,6 +505,22 @@ img {
   font-family: "Montserrat", sans-serif;
 }
 
+.resources-main-list-head {
+  margin: 0.4rem 0 0.7rem;
+}
+
+.resources-main-list-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.resources-main-list-head p {
+  margin: 0.35rem 0 0;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
 .org-overview-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
