@@ -263,6 +263,8 @@ const resources = [
   }
 ];
 
+let skolarData = { ...skolar };
+
 // ============================================
 // PLEDGE DATA (localStorage)
 // ============================================
@@ -537,8 +539,29 @@ function showToast(message) {
 const sveitarfelagSelect = document.getElementById("pledge-sveitarfelag");
 const schoolSelect = document.getElementById("pledge-school");
 
-if (sveitarfelagSelect) {
-  const sortedMunicipalities = Object.keys(skolar).sort((a, b) =>
+function populateSchoolOptions(municipality) {
+  schoolSelect.innerHTML = '<option value="">— Veldu skóla —</option>';
+
+  if (municipality && skolarData[municipality]) {
+    skolarData[municipality].sort((a, b) => a.localeCompare(b, "is")).forEach((s) => {
+      const opt = document.createElement("option");
+      opt.value = s;
+      opt.textContent = s;
+      schoolSelect.appendChild(opt);
+    });
+    schoolSelect.disabled = false;
+  } else {
+    schoolSelect.disabled = true;
+  }
+}
+
+function renderMunicipalityDropdown() {
+  if (!sveitarfelagSelect) return;
+
+  const currentValue = sveitarfelagSelect.value;
+  sveitarfelagSelect.innerHTML = '<option value="">— Veldu sveitarfélag —</option>';
+
+  const sortedMunicipalities = Object.keys(skolarData).sort((a, b) =>
     a.localeCompare(b, "is")
   );
 
@@ -549,21 +572,20 @@ if (sveitarfelagSelect) {
     sveitarfelagSelect.appendChild(opt);
   });
 
+  if (currentValue && skolarData[currentValue]) {
+    sveitarfelagSelect.value = currentValue;
+    populateSchoolOptions(currentValue);
+  } else {
+    populateSchoolOptions("");
+  }
+}
+
+if (sveitarfelagSelect) {
+  renderMunicipalityDropdown();
+
   sveitarfelagSelect.addEventListener("change", () => {
     const municipality = sveitarfelagSelect.value;
-    schoolSelect.innerHTML = '<option value="">— Veldu skóla —</option>';
-
-    if (municipality && skolar[municipality]) {
-      skolar[municipality].sort((a, b) => a.localeCompare(b, "is")).forEach((s) => {
-        const opt = document.createElement("option");
-        opt.value = s;
-        opt.textContent = s;
-        schoolSelect.appendChild(opt);
-      });
-      schoolSelect.disabled = false;
-    } else {
-      schoolSelect.disabled = true;
-    }
+    populateSchoolOptions(municipality);
   });
 }
 
@@ -638,7 +660,7 @@ let currentSearch = "";
 
 function getAllSchoolsFlat() {
   const list = [];
-  for (const [municipality, schools] of Object.entries(skolar)) {
+  for (const [municipality, schools] of Object.entries(skolarData)) {
     for (const school of schools) {
       list.push({ name: school, municipality });
     }
@@ -726,7 +748,11 @@ function renderFilterButtons() {
   const filterBar = document.getElementById("sveitarfelag-filters");
   if (!filterBar) return;
 
-  const municipalities = Object.keys(skolar).sort((a, b) =>
+  const defaultButtonHtml =
+    '<button class="filter-btn active" data-filter="all">Öll sveitarfélög</button>';
+  filterBar.innerHTML = defaultButtonHtml;
+
+  const municipalities = Object.keys(skolarData).sort((a, b) =>
     a.localeCompare(b, "is")
   );
 
@@ -744,21 +770,62 @@ function renderFilterButtons() {
     filterBar.appendChild(btn);
   });
 
-  filterBar.addEventListener("click", (e) => {
-    const btn = e.target.closest(".filter-btn");
-    if (!btn) return;
+  if (!filterBar.dataset.boundClick) {
+    filterBar.addEventListener("click", (e) => {
+      const btn = e.target.closest(".filter-btn");
+      if (!btn) return;
 
-    filterBar.querySelectorAll(".filter-btn").forEach((b) =>
-      b.classList.remove("active")
-    );
-    btn.classList.add("active");
+      filterBar.querySelectorAll(".filter-btn").forEach((b) =>
+        b.classList.remove("active")
+      );
+      btn.classList.add("active");
 
-    currentFilter = btn.dataset.filter;
-    renderSchoolDirectory();
-  });
+      currentFilter = btn.dataset.filter;
+      renderSchoolDirectory();
+    });
+    filterBar.dataset.boundClick = "true";
+  }
 }
 
 renderFilterButtons();
+
+async function hydrateSchoolsFromServer() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/schools/tree`);
+    if (!response.ok) return;
+
+    const serverSchools = await response.json();
+    if (!serverSchools || typeof serverSchools !== "object") return;
+
+    const normalized = {};
+    Object.entries(serverSchools).forEach(([municipality, schools]) => {
+      if (!Array.isArray(schools)) return;
+
+      const cleanMunicipality = String(municipality || "").trim();
+      if (!cleanMunicipality) return;
+
+      const cleanSchools = schools
+        .map((school) => String(school || "").trim())
+        .filter(Boolean);
+
+      if (!cleanSchools.length) return;
+      normalized[cleanMunicipality] = cleanSchools;
+    });
+
+    if (!Object.keys(normalized).length) return;
+
+    skolarData = normalized;
+    currentFilter = "all";
+
+    renderMunicipalityDropdown();
+    renderFilterButtons();
+    renderSchoolDirectory();
+  } catch {
+    // keep local school data fallback
+  }
+}
+
+hydrateSchoolsFromServer();
 
 // ============================================
 // SCHOOL SEARCH

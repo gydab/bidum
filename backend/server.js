@@ -52,10 +52,75 @@ function extractConstLiteral(fileContent, constName) {
   return match[1];
 }
 
-function seedSchoolsFromFrontend() {
-  const existing = db.prepare("SELECT COUNT(*) as count FROM schools").get();
-  if (existing.count > 0) return;
+function parseCsvLine(line) {
+  const values = [];
+  let current = "";
+  let inQuotes = false;
 
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    const next = line[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && next === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (char === "," && !inQuotes) {
+      values.push(current.trim());
+      current = "";
+      continue;
+    }
+
+    current += char;
+  }
+
+  values.push(current.trim());
+  return values;
+}
+
+function loadSchoolsFromCsv(csvPath) {
+  if (!fs.existsSync(csvPath)) return null;
+
+  const csvContent = fs.readFileSync(csvPath, "utf8");
+  const lines = csvContent
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+  if (!lines.length) return null;
+
+  const header = parseCsvLine(lines[0]);
+  const schoolNameIndex = header.findIndex((col) =>
+    col.toLowerCase().startsWith("nafn skóla")
+  );
+  const municipalityIndex = header.findIndex((col) =>
+    col.toLowerCase().startsWith("sveitarfélag")
+  );
+
+  if (schoolNameIndex < 0 || municipalityIndex < 0) return null;
+
+  const rows = [];
+  for (const line of lines.slice(1)) {
+    const cols = parseCsvLine(line);
+    const school = (cols[schoolNameIndex] || "").trim();
+    const municipality = (cols[municipalityIndex] || "").trim();
+
+    if (!school || !municipality) continue;
+    if (school.includes("@")) continue;
+
+    rows.push({ school, municipality });
+  }
+
+  return rows.length ? rows : null;
+}
+
+function seedSchoolsFromFrontend() {
   const scriptPath = path.resolve(__dirname, "..", "script.js");
   if (!fs.existsSync(scriptPath)) return;
 
@@ -75,22 +140,52 @@ function seedSchoolsFromFrontend() {
     "INSERT OR IGNORE INTO schools(name, municipality_id) VALUES(?, ?)"
   );
 
-  const tx = db.transaction(() => {
-    for (const [municipality, schools] of Object.entries(skolar)) {
-      insertMunicipality.run(municipality);
-      const row = getMunicipalityId.get(municipality);
-      if (!row) continue;
+  for (const [municipality, schools] of Object.entries(skolar)) {
+    insertMunicipality.run(municipality);
+    const row = getMunicipalityId.get(municipality);
+    if (!row) continue;
 
-      for (const school of schools) {
-        insertSchool.run(school, row.id);
-      }
+    for (const school of schools) {
+      insertSchool.run(String(school).trim(), row.id);
     }
+  }
+}
+
+function seedSchoolsFromCsvOrFrontend() {
+  const csvPath = path.resolve(__dirname, "..", "skolar.csv");
+  const csvRows = loadSchoolsFromCsv(csvPath);
+
+  const insertMunicipality = db.prepare(
+    "INSERT OR IGNORE INTO municipalities(name) VALUES(?)"
+  );
+  const getMunicipalityId = db.prepare(
+    "SELECT id FROM municipalities WHERE name = ?"
+  );
+  const insertSchool = db.prepare(
+    "INSERT OR IGNORE INTO schools(name, municipality_id) VALUES(?, ?)"
+  );
+
+  const tx = db.transaction(() => {
+    db.prepare("DELETE FROM schools").run();
+    db.prepare("DELETE FROM municipalities").run();
+
+    if (csvRows) {
+      for (const row of csvRows) {
+        insertMunicipality.run(row.municipality);
+        const municipalityRow = getMunicipalityId.get(row.municipality);
+        if (!municipalityRow) continue;
+        insertSchool.run(row.school, municipalityRow.id);
+      }
+      return;
+    }
+
+    seedSchoolsFromFrontend();
   });
 
   tx();
 }
 
-seedSchoolsFromFrontend();
+seedSchoolsFromCsvOrFrontend();
 
 app.use(cors());
 app.use(express.json());
