@@ -139,127 +139,193 @@ const skolar = {
 // ============================================
 // RESOURCES DATA
 // ============================================
-function getBookPlatformLinks(_title, _author = "", directLinks = {}) {
-  const orderedLabels = [
-    "Spotify",
-    "Storytel",
-    "Audible",
-    "Amazon",
-    "Rafbókasafnið",
-    "Bókasafnið",
-    "Leitir.is"
-  ];
-
-  return orderedLabels
-    .filter((label) => Boolean(directLinks[label]))
-    .map((label) => ({
-      label,
-      link: directLinks[label]
-    }));
-}
-
 const resources = [
   {
-    type: "book", typeLabel: "Bók",
-    title: "The Anxious Generation", author: "Jonathan Haidt",
-    description: "Hvernig endurskipulagning æskuárinnar á snjallsímum og samfélagsmiðlum veldur farsótt geðsjúkdóma meðal ungmennis.",
-    link: "https://www.anxiousgeneration.com/",
-    tags: ["Geðheilsa", "Samfélagsmiðlar", "Foreldraráð"],
-    platformLinks: getBookPlatformLinks("The Anxious Generation", "Jonathan Haidt")
+    type: "article",
+    typeLabel: "Grein",
+    title: "Foreldraþorpið — leiðir fyrir foreldra í stafrænum áskorunum",
+    source: "Fyrstu fimm",
+    sourceType: "Fræðsluverkefni",
+    summary: "Aðgengilegt efni fyrir foreldra um netnotkun barna, samskipti heima og hagnýt skref til að setja mörk.",
+    link: "https://fyrstufimm.is/",
+    tags: ["Foreldraráð", "Samfélagsmiðlar", "Mörk"],
+    audience: ["parents"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Vísaðu í sameiginlega ábyrgð heimilis og skóla á stafrænu umhverfi barns.",
+      "Byggðu samtal á skýrum, framkvæmdanlegum daglegum venjum í stað refsinga."
+    ]
   },
   {
-    type: "book", typeLabel: "Bók",
-    title: "How to Break Up with Your Phone", author: "Catherine Price",
-    description: "Hagnýt ráð til að taka aflið til baka frá snjallsímanum og lifa meðvitaðra með tækni.",
-    link: "https://www.catherineprice.com/books",
-    tags: ["Skjánotkun", "Athygli", "Dagleg venja"],
-    platformLinks: getBookPlatformLinks("How to Break Up with Your Phone", "Catherine Price")
+    type: "org",
+    typeLabel: "Samtök",
+    title: "Heimili og skóli — samstarf heimila og skóla",
+    source: "Heimili og skóli",
+    sourceType: "Samtök",
+    summary: "Efni um foreldrasamstarf, réttindi og uppbyggileg samskipti við skóla sem nýtast vel í formlegum samtölum.",
+    link: "https://heimiliogskoli.is/",
+    tags: ["Skólasamstarf", "Foreldrar", "Réttindi barns"],
+    audience: ["parents", "school-dialogue"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Leggðu áherslu á sameiginleg markmið: vellíðan, öryggi og nám barns.",
+      "Biddu um skýra samskiptaleið milli foreldra, umsjónarkennara og stjórnenda."
+    ]
   },
   {
-    type: "book", typeLabel: "Bók",
-    title: "Scattered Minds", author: "Gabor Maté",
-    description: "Um athyglisbrest, tilfinningar og hvernig tengslamyndun og umhverfi móta börn.",
-    tags: ["ADHD", "Tengslamyndun", "Geðheilsa"],
-    platformLinks: getBookPlatformLinks("Scattered Minds", "Gabor Maté", {
-      Rafbókasafnið: "https://rafbokasafnid.overdrive.com/media/4251242"
-    })
+    type: "org",
+    typeLabel: "Samtök",
+    title: "Barnaheill — stafrænt öryggi og réttindi barna",
+    source: "Barnaheill",
+    sourceType: "Samtök",
+    summary: "Fræðsla um öryggi barna á netinu, réttindi barns og vernd gegn skaðlegu efni og netofbeldi.",
+    link: "https://barnaheill.is/",
+    tags: ["Netöryggi", "Réttindi barns", "Samfélagsmiðlar"],
+    audience: ["parents", "school-dialogue"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Nefndu rétt barns til verndar og þátttöku í öruggu stafrænu umhverfi.",
+      "Óskaðu eftir skólareglum sem taka á neteinelti og stafrænu áreiti."
+    ]
   },
   {
-    type: "book", typeLabel: "Bók",
-    title: "Hold On to Your Kids", author: "Gordon Neufeld & Gabor Maté",
-    description: "Af hverju foreldratengsl skipta mestu máli og hvernig má styrkja þau í nútímasamfélagi.",
-    tags: ["Uppeldi", "Tengsl", "Félagsþrýstingur"],
-    platformLinks: getBookPlatformLinks("Hold On to Your Kids", "Gordon Neufeld Gabor Maté")
+    type: "research",
+    typeLabel: "Rannsókn",
+    title: "UNESCO — Technology in Education",
+    source: "UNESCO",
+    sourceType: "Alþjóðastofnun",
+    summary: "Yfirlit um áhrif tækni í skólastarfi, þar á meðal athyglibrest, lærdóm og þörf á skýrum reglum.",
+    link: "https://www.unesco.org/gem-report/en/technology",
+    tags: ["Skóli", "Skjátími", "Stefnumótun"],
+    audience: ["school-dialogue"],
+    trustLevel: "A",
+    publishedAt: "2023-07-26",
+    dialoguePoints: [
+      "Styðjið tillögur með alþjóðlegum gögnum um áhrif á nám og athygli.",
+      "Ræðið hvernig samræmdar reglur milli bekkja draga úr álagi á foreldra og kennara."
+    ]
   },
   {
-    type: "book", typeLabel: "Bók",
-    title: "The Whole-Brain Child", author: "Daniel J. Siegel & Tina Payne Bryson",
-    description: "Hagnýtar leiðir fyrir foreldra til að styðja tilfinningaþroska og sjálfsstjórn barna.",
-    tags: ["Heilaþroski", "Tilfinningastjórnun", "Uppeldi"],
-    platformLinks: getBookPlatformLinks("The Whole-Brain Child", "Daniel J Siegel Tina Payne Bryson")
+    type: "article",
+    typeLabel: "Grein",
+    title: "Embætti landlæknis — geðheilsa barna og ungmenna",
+    source: "Embætti landlæknis",
+    sourceType: "Stofnun",
+    summary: "Fræðslu- og leiðbeiningarefni um geðheilsu barna, áhættuþætti og hvar megi leita aðstoðar.",
+    link: "https://island.is/s/landlaeknir",
+    tags: ["Geðheilsa", "Forvarnir", "Úrræði"],
+    audience: ["parents", "school-dialogue"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Vísaðu í opinberar leiðbeiningar um snemmtæka íhlutun og samvinnu kerfa.",
+      "Leggðu til skýra verkferla þegar áhyggjur vakna af kvíða, svefni eða félagslegri einangrun."
+    ]
   },
   {
-    type: "book", typeLabel: "Bók",
-    title: "The Book You Wish Your Parents Had Read", author: "Philippa Perry",
-    description: "Bókin sem þú vildir að foreldrar þínir hefðu lesið — um samskipti, mörk og heilbrigð tengsl.",
-    tags: ["Foreldrahlutverkið", "Samskipti", "Mörk"],
-    platformLinks: getBookPlatformLinks("The Book You Wish Your Parents Had Read", "Philippa Perry")
+    type: "org",
+    typeLabel: "Samtök",
+    title: "SAFT — örugg netnotkun barna",
+    source: "SAFT",
+    sourceType: "Fræðsluverkefni",
+    summary: "Efni um netöryggi, samfélagsmiðla og stafræna borgaravitund sem foreldrar og skólar geta nýtt saman.",
+    link: "https://www.saft.is/",
+    tags: ["Netöryggi", "Samfélagsmiðlar", "Skóli"],
+    audience: ["parents", "school-dialogue"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Kallaðu eftir fræðsluáætlun í skóla um örugga netnotkun eftir aldurshópum.",
+      "Stillið saman væntingar heimilis og skóla um samskiptareglur á netinu."
+    ]
   },
   {
-    type: "research", typeLabel: "Rannsókn",
-    title: "Sapien Labs — Age of First Smartphone", author: "Sapien Labs",
-    description: "Rannsókn sem sýnir beina fylgni milli aldurs við fyrsta snjallsíma og geðheilsu ungmenna.",
-    link: "https://sapienlabs.org/age-of-first-smartphone-and-mental-wellbeing-outcomes/"
+    type: "org",
+    typeLabel: "Samtök",
+    title: "Bergið headspace — snemmbær geðheilbrigðisstuðningur",
+    source: "Bergið headspace",
+    sourceType: "Úrræði",
+    summary: "Lágþröskuldur fyrir ungt fólk og fjölskyldur með áherslu á stuðning áður en vandi stækkar.",
+    link: "https://www.bergid.is/",
+    tags: ["Geðheilsa", "Snemmtæk íhlutun", "Stuðningur"],
+    audience: ["parents"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Vísaðu í mikilvægi lágþröskuldsúrræða þegar börn sýna fyrstu merki vanlíðanar.",
+      "Ræðið hvernig skóli og foreldrar geti samræmt tilvísunarleiðir að úrræðum."
+    ]
   },
   {
-    type: "org", typeLabel: "Samtök",
-    title: "Wait Until 8th", author: "Bandaríkin",
-    description: "Foreldrahreyfing í Bandaríkjunum sem hvetur foreldra til að bíða með snjallsíma til 8. bekkjar.",
-    link: "https://www.waituntil8th.org/"
+    type: "org",
+    typeLabel: "Samtök",
+    title: "Geðhjálp — fræðsla og stuðningur",
+    source: "Geðhjálp",
+    sourceType: "Samtök",
+    summary: "Fræðsla um geðrækt, kvíða og leiðir að stuðningi fyrir fjölskyldur sem vilja bregðast snemma við.",
+    link: "https://gedhjalp.is/",
+    tags: ["Geðheilsa", "Kvíði", "Foreldrar"],
+    audience: ["parents"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Byggðu samtalið á því að markmiðið sé vellíðan barns, ekki aðeins agi eða árangur.",
+      "Notaðu efnið til að ræða snemmbær viðbrögð áður en einkenni harðna."
+    ]
   },
   {
-    type: "org", typeLabel: "Samtök",
-    title: "Smartphone Free Childhood", author: "Bretland",
-    description: "Bresk foreldrahreyfing sem barðist fyrir meðvitaðri tæknivaldri og verndar barnæskuna.",
-    link: "https://smartphonefreechildhood.co.uk/"
+    type: "article",
+    typeLabel: "Grein",
+    title: "Miðstöð menntunar og skólaþjónustu — ráðgjöf fyrir skóla",
+    source: "Miðstöð menntunar og skólaþjónustu",
+    sourceType: "Stofnun",
+    summary: "Opinber vettvangur með leiðbeiningum sem skólar og foreldrar geta stuðst við við stefnumótun og útfærslu.",
+    link: "https://island.is/s/midstod-menntunar-og-skolathjonustu",
+    tags: ["Skólasamstarf", "Stefna", "Stuðningskerfi"],
+    audience: ["school-dialogue"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Ræddu hvernig samræmd framkvæmd milli skóla minnkar ójöfnuð milli barna.",
+      "Notið efnið sem grunn að skriflegri aðgerðaáætlun skóla og foreldrafélags."
+    ]
   },
   {
-    type: "research", typeLabel: "Rannsókn",
-    title: "UNESCO — Smartphones in Schools", author: "UNESCO 2023",
-    description: "Skýrsla UNESCO um neikvæð áhrif snjallsíma á nám og bekkjardýnamík í skólum.",
-    link: "https://www.unesco.org/gem-report/en/technology"
+    type: "research",
+    typeLabel: "Rannsókn",
+    title: "UNICEF — Child Rights and the Digital Environment",
+    source: "UNICEF",
+    sourceType: "Alþjóðastofnun",
+    summary: "Áhersla á réttindi barna í stafrænu umhverfi, vernd, þátttöku og ábyrgð opinberra aðila.",
+    link: "https://www.unicef.is/",
+    tags: ["Réttindi barns", "Stafrænt umhverfi", "Stefnumótun"],
+    audience: ["school-dialogue"],
+    trustLevel: "A",
+    publishedAt: "2024-01-01",
+    dialoguePoints: [
+      "Rammaðu umræðuna inn sem réttindamál barna fremur en smekksatriði.",
+      "Krefstu mælanlegra markmiða um öryggi og stafræna vellíðan í skólaumhverfi."
+    ]
   },
   {
-    type: "article", typeLabel: "Grein",
-    title: "WHO — Addictive behaviours: gaming disorder", author: "WHO",
-    description: "Yfirlit um ávanabindandi hegðun tengda skjánotkun og mikilvægi forvarna fyrir börn og ungmenni.",
-    link: "https://www.who.int/news-room/questions-and-answers/item/addictive-behaviours-gaming-disorder"
-  },
-  {
-    type: "book", typeLabel: "Bók",
-    title: "Stolen Focus", author: "Johann Hari",
-    description: "Af hverju við getum ekki einbeitt okkur — og hvað við getum gert til að ná athyglinni til baka.",
-    link: "https://stolenfocusbook.com/",
-    tags: ["Athygli", "Skjáheimur", "Samfélag"],
-    platformLinks: getBookPlatformLinks("Stolen Focus", "Johann Hari")
-  },
-  {
-    type: "podcast", typeLabel: "Hlaðvarp",
-    title: "Viðring í uppeldi", author: "Spotify",
-    description: "Hlaðvarp um uppeldi og áskoranir foreldra í samtímanum.",
-    link: "https://open.spotify.com/search/vi%C3%B0ring%20%C3%AD%20uppeldi"
-  },
-  {
-    type: "podcast", typeLabel: "Hlaðvarp",
-    title: "Kvíðakynslóðin", author: "Spotify",
-    description: "Hlaðvarp um kvíða, geðheilsu barna og áhrif stafræns umhverfis.",
-    link: "https://open.spotify.com/search/kv%C3%AD%C3%B0akynsl%C3%B3%C3%B0in"
-  },
-  {
-    type: "org", typeLabel: "Samtök",
-    title: "Center for Humane Technology", author: "Tristan Harris o.fl.",
-    description: "Samtök sem berjast gegn reikniritstýrðri tæknifíkn og beita sér fyrir mannlegri tækni.",
-    link: "https://www.humanetech.com/"
+    type: "article",
+    typeLabel: "Grein",
+    title: "Píeta samtökin — fræðsla um vanlíðan og forvarnir",
+    source: "Píeta",
+    sourceType: "Samtök",
+    summary: "Fræðsluefni um andlega vanlíðan og forvarnir sem getur stutt við erfið samtöl um börn og ungmenni.",
+    link: "https://pieta.is/",
+    tags: ["Geðheilsa", "Forvarnir", "Stuðningur"],
+    audience: ["parents", "school-dialogue"],
+    trustLevel: "A",
+    publishedAt: "2025-01-01",
+    dialoguePoints: [
+      "Leggðu áherslu á að snemmtæk viðbrögð og opið samtal geta dregið úr alvarlegri þróun.",
+      "Biddu um samstillt viðbragð heimilis, skóla og heilbrigðisþjónustu þegar þörf krefur."
+    ]
   }
 ];
 
@@ -358,32 +424,72 @@ function getSchoolsWithPledges() {
 // ============================================
 const resourcesList = document.getElementById("resources-list");
 const resourceFilterButtons = document.querySelectorAll(".resource-filter-btn");
+const audienceFilterButtons = document.querySelectorAll("[data-audience-filter]");
 let currentResourceFilter = "all";
+let currentAudienceFilter = "all";
+
+function formatResourceDate(dateString) {
+  if (!dateString) return "Dagsetning ekki skráð";
+
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return "Dagsetning ekki skráð";
+
+  return date.toLocaleDateString("is-IS", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+}
+
+function getAudienceLabel(audienceCode) {
+  if (audienceCode === "parents") return "Foreldrar";
+  if (audienceCode === "school-dialogue") return "Samtal við skóla/yfirvöld";
+  return "Annað";
+}
 
 function renderResources() {
   if (!resourcesList) return;
 
-  const filteredResources =
+  let filteredResources =
     currentResourceFilter === "all"
       ? resources
       : resources.filter((res) => res.type === currentResourceFilter);
 
+  if (currentAudienceFilter !== "all") {
+    filteredResources = filteredResources.filter((res) =>
+      Array.isArray(res.audience) && res.audience.includes(currentAudienceFilter)
+    );
+  }
+
   resourcesList.innerHTML = "";
+
+  if (!filteredResources.length) {
+    resourcesList.innerHTML = `
+      <article class="resource-card resource-empty-state">
+        <h3>Engar færslur passa við valdar síur</h3>
+        <p>Prófaðu að velja "Allir" eða "Allt efni" til að sjá allt safnið.</p>
+      </article>
+    `;
+    return;
+  }
 
   filteredResources.forEach((res) => {
     const card = document.createElement("article");
     card.className = "resource-card";
+
     const tagsHtml = Array.isArray(res.tags) && res.tags.length
       ? `<div class="resource-tags">${res.tags
           .map((tag) => `<span class="resource-tag">${tag}</span>`)
           .join("")}</div>`
       : "";
 
-    const links = Array.isArray(res.platformLinks) && res.platformLinks.length
-      ? res.platformLinks
-      : res.link
-        ? [{ label: "Skoða nánar", link: res.link }]
-        : [];
+    const audienceHtml = Array.isArray(res.audience) && res.audience.length
+      ? `<div class="resource-audience">${res.audience
+          .map((group) => `<span class="resource-audience-chip">${getAudienceLabel(group)}</span>`)
+          .join("")}</div>`
+      : "";
+
+    const links = res.link ? [{ label: "Opna heimild", link: res.link }] : [];
 
     const linksHtml = links.length
       ? `<div class="resource-links">${links
@@ -394,11 +500,23 @@ function renderResources() {
           .join("")}</div>`
       : "";
 
+    const dialoguePointsHtml = Array.isArray(res.dialoguePoints) && res.dialoguePoints.length
+      ? `<div class="resource-dialogue">
+          <h4>Nota í samtali við skóla/yfirvöld</h4>
+          <ul>
+            ${res.dialoguePoints.map((point) => `<li>${point}</li>`).join("")}
+          </ul>
+        </div>`
+      : "";
+
     card.innerHTML = `
       <span class="resource-type ${res.type}">${res.typeLabel}</span>
       <h3>${res.title}</h3>
-      <p><em>${res.author}</em> — ${res.description}</p>
+      <p>${res.summary}</p>
+      <p class="resource-meta"><strong>Heimild:</strong> ${res.source} (${res.sourceType}) · <strong>Dagsetning:</strong> ${formatResourceDate(res.publishedAt)} · <strong>Trauststig:</strong> ${res.trustLevel}</p>
+      ${audienceHtml}
       ${tagsHtml}
+      ${dialoguePointsHtml}
       ${linksHtml}
     `;
     resourcesList.appendChild(card);
@@ -408,8 +526,25 @@ function renderResources() {
 if (resourceFilterButtons.length) {
   resourceFilterButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      if (button.dataset.audienceFilter) return;
       currentResourceFilter = button.dataset.resourceFilter || "all";
-      resourceFilterButtons.forEach((btn) => btn.classList.remove("active"));
+
+      resourceFilterButtons.forEach((btn) => {
+        if (!btn.dataset.resourceFilter) return;
+        btn.classList.remove("active");
+      });
+
+      button.classList.add("active");
+      renderResources();
+    });
+  });
+}
+
+if (audienceFilterButtons.length) {
+  audienceFilterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      currentAudienceFilter = button.dataset.audienceFilter || "all";
+      audienceFilterButtons.forEach((btn) => btn.classList.remove("active"));
       button.classList.add("active");
       renderResources();
     });
