@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const Database = require("better-sqlite3");
+const { DatabaseSync } = require("node:sqlite");
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
@@ -12,8 +12,8 @@ const dataDir = path.join(__dirname, "data");
 const dbPath = path.join(dataDir, "bidum.db");
 fs.mkdirSync(dataDir, { recursive: true });
 
-const db = new Database(dbPath);
-db.pragma("journal_mode = WAL");
+const db = new DatabaseSync(dbPath);
+db.exec("PRAGMA journal_mode = WAL;");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS municipalities (
@@ -165,7 +165,8 @@ function seedSchoolsFromCsvOrFrontend() {
     "INSERT OR IGNORE INTO schools(name, municipality_id) VALUES(?, ?)"
   );
 
-  const tx = db.transaction(() => {
+  db.exec("BEGIN");
+  try {
     db.prepare("DELETE FROM schools").run();
     db.prepare("DELETE FROM municipalities").run();
 
@@ -176,13 +177,15 @@ function seedSchoolsFromCsvOrFrontend() {
         if (!municipalityRow) continue;
         insertSchool.run(row.school, municipalityRow.id);
       }
-      return;
+    } else {
+      seedSchoolsFromFrontend();
     }
 
-    seedSchoolsFromFrontend();
-  });
-
-  tx();
+    db.exec("COMMIT");
+  } catch (error) {
+    db.exec("ROLLBACK");
+    throw error;
+  }
 }
 
 seedSchoolsFromCsvOrFrontend();
