@@ -495,9 +495,45 @@ img {
   margin: 1rem 0 1.4rem;
 }
 
-.resources-filters-audience {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
+.resources-org-overview {
+  margin: 1rem 0 1.3rem;
+}
+
+.resources-org-overview h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.org-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.org-overview-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+}
+
+.org-overview-card h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.95rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+.org-overview-card p {
+  margin: 0 0 0.5rem;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.org-overview-card a {
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .resource-filter-btn {
@@ -600,25 +636,6 @@ img {
 .resource-card a {
   font-weight: 600;
   font-size: 0.9rem;
-}
-
-.resource-audience {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin: 0 0 0.8rem;
-}
-
-.resource-audience-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.18rem 0.55rem;
-  border-radius: 999px;
-  background: var(--surface-soft);
-  border: 1px solid var(--border);
-  color: var(--text-soft);
-  font-size: 0.72rem;
-  font-weight: 700;
 }
 
 .resource-tags {

@@ -329,6 +329,133 @@ const resources = [
   }
 ];
 
+const legacyResources = [
+  {
+    type: "book", typeLabel: "Bók",
+    title: "The Anxious Generation", author: "Jonathan Haidt",
+    description: "Hvernig endurskipulagning æskuárinnar á snjallsímum og samfélagsmiðlum veldur farsótt geðsjúkdóma meðal ungmennis.",
+    link: "https://www.anxiousgeneration.com/",
+    tags: ["Geðheilsa", "Samfélagsmiðlar", "Foreldraráð"]
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "How to Break Up with Your Phone", author: "Catherine Price",
+    description: "Hagnýt ráð til að taka aflið til baka frá snjallsímanum og lifa meðvitaðra með tækni.",
+    link: "https://www.catherineprice.com/books",
+    tags: ["Skjánotkun", "Athygli", "Dagleg venja"]
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "Scattered Minds", author: "Gabor Maté",
+    description: "Um athyglisbrest, tilfinningar og hvernig tengslamyndun og umhverfi móta börn.",
+    tags: ["ADHD", "Tengslamyndun", "Geðheilsa"]
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "Hold On to Your Kids", author: "Gordon Neufeld & Gabor Maté",
+    description: "Af hverju foreldratengsl skipta mestu máli og hvernig má styrkja þau í nútímasamfélagi.",
+    tags: ["Uppeldi", "Tengsl", "Félagsþrýstingur"]
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "The Whole-Brain Child", author: "Daniel J. Siegel & Tina Payne Bryson",
+    description: "Hagnýtar leiðir fyrir foreldra til að styðja tilfinningaþroska og sjálfsstjórn barna.",
+    tags: ["Heilaþroski", "Tilfinningastjórnun", "Uppeldi"]
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "The Book You Wish Your Parents Had Read", author: "Philippa Perry",
+    description: "Bókin sem þú vildir að foreldrar þínir hefðu lesið — um samskipti, mörk og heilbrigð tengsl.",
+    tags: ["Foreldrahlutverkið", "Samskipti", "Mörk"]
+  },
+  {
+    type: "research", typeLabel: "Rannsókn",
+    title: "Sapien Labs — Age of First Smartphone", author: "Sapien Labs",
+    description: "Rannsókn sem sýnir beina fylgni milli aldurs við fyrsta snjallsíma og geðheilsu ungmenna.",
+    link: "https://sapienlabs.org/age-of-first-smartphone-and-mental-wellbeing-outcomes/"
+  },
+  {
+    type: "org", typeLabel: "Samtök",
+    title: "Wait Until 8th", author: "Bandaríkin",
+    description: "Foreldrahreyfing í Bandaríkjunum sem hvetur foreldra til að bíða með snjallsíma til 8. bekkjar.",
+    link: "https://www.waituntil8th.org/"
+  },
+  {
+    type: "org", typeLabel: "Samtök",
+    title: "Smartphone Free Childhood", author: "Bretland",
+    description: "Bresk foreldrahreyfing sem barðist fyrir meðvitaðri tæknivaldri og verndar barnæskuna.",
+    link: "https://smartphonefreechildhood.co.uk/"
+  },
+  {
+    type: "research", typeLabel: "Rannsókn",
+    title: "UNESCO — Smartphones in Schools", author: "UNESCO 2023",
+    description: "Skýrsla UNESCO um neikvæð áhrif snjallsíma á nám og bekkjardýnamík í skólum.",
+    link: "https://www.unesco.org/gem-report/en/technology"
+  },
+  {
+    type: "article", typeLabel: "Grein",
+    title: "WHO — Addictive behaviours: gaming disorder", author: "WHO",
+    description: "Yfirlit um ávanabindandi hegðun tengda skjánotkun og mikilvægi forvarna fyrir börn og ungmenni.",
+    link: "https://www.who.int/news-room/questions-and-answers/item/addictive-behaviours-gaming-disorder"
+  },
+  {
+    type: "book", typeLabel: "Bók",
+    title: "Stolen Focus", author: "Johann Hari",
+    description: "Af hverju við getum ekki einbeitt okkur — og hvað við getum gert til að ná athyglinni til baka.",
+    link: "https://stolenfocusbook.com/",
+    tags: ["Athygli", "Skjáheimur", "Samfélag"]
+  },
+  {
+    type: "podcast", typeLabel: "Hlaðvarp",
+    title: "Viðring í uppeldi", author: "Spotify",
+    description: "Hlaðvarp um uppeldi og áskoranir foreldra í samtímanum.",
+    link: "https://open.spotify.com/search/vi%C3%B0ring%20%C3%AD%20uppeldi"
+  },
+  {
+    type: "podcast", typeLabel: "Hlaðvarp",
+    title: "Kvíðakynslóðin", author: "Spotify",
+    description: "Hlaðvarp um kvíða, geðheilsu barna og áhrif stafræns umhverfis.",
+    link: "https://open.spotify.com/search/kv%C3%AD%C3%B0akynsl%C3%B3%C3%B0in"
+  },
+  {
+    type: "org", typeLabel: "Samtök",
+    title: "Center for Humane Technology", author: "Tristan Harris o.fl.",
+    description: "Samtök sem berjast gegn reikniritstýrðri tæknifíkn og beita sér fyrir mannlegri tækni.",
+    link: "https://www.humanetech.com/"
+  }
+];
+
+function normalizeLegacyResource(item) {
+  return {
+    type: item.type,
+    typeLabel: item.typeLabel,
+    title: item.title,
+    source: item.author || "Ótilgreind heimild",
+    sourceType: "Greinasafn",
+    summary: item.description || "",
+    link: item.link,
+    tags: item.tags || [],
+    audience: ["parents"],
+    trustLevel: "B",
+    publishedAt: "",
+    dialoguePoints: []
+  };
+}
+
+const resourcesCatalog = [...resources, ...legacyResources.map(normalizeLegacyResource)]
+  .filter((item) => item.type !== "org");
+
+const organizationOverviewItems = [
+  { name: "Heimili og skóli", focus: "Foreldrasamstarf og skólasamskipti", link: "https://heimiliogskoli.is/" },
+  { name: "Barnaheill", focus: "Réttindi barna og netöryggi", link: "https://barnaheill.is/" },
+  { name: "SAFT", focus: "Örugg netnotkun barna", link: "https://www.saft.is/" },
+  { name: "Bergið headspace", focus: "Snemmtækur geðheilbrigðisstuðningur", link: "https://www.bergid.is/" },
+  { name: "Píeta", focus: "Fræðsla og forvarnir í geðheilbrigði", link: "https://pieta.is/" },
+  { name: "Geðhjálp", focus: "Stuðningur og geðrækt", link: "https://gedhjalp.is/" },
+  { name: "ADHD samtökin", focus: "Fræðsla um athygli og stuðningsúrræði", link: "https://www.adhd.is/" },
+  { name: "Einhverfusamtökin", focus: "Ráðgjöf og réttindagæsla", link: "https://www.einhverfa.is/" }
+];
+
 let skolarData = { ...skolar };
 
 // ============================================
@@ -423,10 +550,9 @@ function getSchoolsWithPledges() {
 // RENDER RESOURCES
 // ============================================
 const resourcesList = document.getElementById("resources-list");
+const orgOverviewList = document.getElementById("org-overview-list");
 const resourceFilterButtons = document.querySelectorAll(".resource-filter-btn");
-const audienceFilterButtons = document.querySelectorAll("[data-audience-filter]");
 let currentResourceFilter = "all";
-let currentAudienceFilter = "all";
 
 function formatResourceDate(dateString) {
   if (!dateString) return "Dagsetning ekki skráð";
@@ -441,25 +567,13 @@ function formatResourceDate(dateString) {
   });
 }
 
-function getAudienceLabel(audienceCode) {
-  if (audienceCode === "parents") return "Foreldrar";
-  if (audienceCode === "school-dialogue") return "Samtal við skóla/yfirvöld";
-  return "Annað";
-}
-
 function renderResources() {
   if (!resourcesList) return;
 
   let filteredResources =
     currentResourceFilter === "all"
-      ? resources
-      : resources.filter((res) => res.type === currentResourceFilter);
-
-  if (currentAudienceFilter !== "all") {
-    filteredResources = filteredResources.filter((res) =>
-      Array.isArray(res.audience) && res.audience.includes(currentAudienceFilter)
-    );
-  }
+      ? resourcesCatalog
+      : resourcesCatalog.filter((res) => res.type === currentResourceFilter);
 
   resourcesList.innerHTML = "";
 
@@ -480,12 +594,6 @@ function renderResources() {
     const tagsHtml = Array.isArray(res.tags) && res.tags.length
       ? `<div class="resource-tags">${res.tags
           .map((tag) => `<span class="resource-tag">${tag}</span>`)
-          .join("")}</div>`
-      : "";
-
-    const audienceHtml = Array.isArray(res.audience) && res.audience.length
-      ? `<div class="resource-audience">${res.audience
-          .map((group) => `<span class="resource-audience-chip">${getAudienceLabel(group)}</span>`)
           .join("")}</div>`
       : "";
 
@@ -514,7 +622,6 @@ function renderResources() {
       <h3>${res.title}</h3>
       <p>${res.summary}</p>
       <p class="resource-meta"><strong>Heimild:</strong> ${res.source} (${res.sourceType}) · <strong>Dagsetning:</strong> ${formatResourceDate(res.publishedAt)} · <strong>Trauststig:</strong> ${res.trustLevel}</p>
-      ${audienceHtml}
       ${tagsHtml}
       ${dialoguePointsHtml}
       ${linksHtml}
@@ -523,10 +630,26 @@ function renderResources() {
   });
 }
 
+function renderOrganizationsOverview() {
+  if (!orgOverviewList) return;
+
+  orgOverviewList.innerHTML = "";
+
+  organizationOverviewItems.forEach((org) => {
+    const card = document.createElement("article");
+    card.className = "org-overview-card";
+    card.innerHTML = `
+      <h4>${org.name}</h4>
+      <p>${org.focus}</p>
+      <a href="${org.link}" target="_blank" rel="noopener">Opna síðu</a>
+    `;
+    orgOverviewList.appendChild(card);
+  });
+}
+
 if (resourceFilterButtons.length) {
   resourceFilterButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      if (button.dataset.audienceFilter) return;
       currentResourceFilter = button.dataset.resourceFilter || "all";
 
       resourceFilterButtons.forEach((btn) => {
@@ -540,17 +663,7 @@ if (resourceFilterButtons.length) {
   });
 }
 
-if (audienceFilterButtons.length) {
-  audienceFilterButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      currentAudienceFilter = button.dataset.audienceFilter || "all";
-      audienceFilterButtons.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
-      renderResources();
-    });
-  });
-}
-
+renderOrganizationsOverview();
 renderResources();
 
 // ============================================
