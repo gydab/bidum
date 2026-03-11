@@ -889,15 +889,33 @@ if (pledgeForm) {
 // ============================================
 // UPDATE TOTALS
 // ============================================
-function updateTotals() {
+function updateTotals(serverStats) {
   const totalPledgesEl = document.getElementById("total-pledges");
   const totalSchoolsEl = document.getElementById("total-schools");
 
-  if (totalPledgesEl) totalPledgesEl.textContent = getTotalPledges();
-  if (totalSchoolsEl) totalSchoolsEl.textContent = getSchoolsWithPledges();
+  if (serverStats) {
+    if (totalPledgesEl) totalPledgesEl.textContent = serverStats.totalPledges;
+    if (totalSchoolsEl) totalSchoolsEl.textContent = serverStats.totalSchools;
+  } else {
+    if (totalPledgesEl) totalPledgesEl.textContent = getTotalPledges();
+    if (totalSchoolsEl) totalSchoolsEl.textContent = getSchoolsWithPledges();
+  }
 }
 
 updateTotals();
+
+async function fetchAndUpdateStats() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/pledges/stats`);
+    if (!response.ok) return;
+    const stats = await response.json();
+    updateTotals(stats);
+  } catch {
+    // local fallback
+  }
+}
+
+fetchAndUpdateStats();
 hydratePledgesFromServer();
 
 // ============================================

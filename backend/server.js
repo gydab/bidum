@@ -259,7 +259,7 @@ app.get("/api/schools/tree", (_req, res) => {
 app.get("/api/pledges", (_req, res) => {
   const rows = db
     .prepare(
-      `SELECT name, email, sveitarfelag, school, grade, child_name as childName, timestamp
+      `SELECT sveitarfelag, school, grade, timestamp
        FROM pledges
        ORDER BY timestamp DESC`
     )
