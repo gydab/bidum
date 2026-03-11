@@ -41,8 +41,19 @@ db.exec(`
     UNIQUE(email, school, grade)
   );
 
+  CREATE TABLE IF NOT EXISTS otp_verifications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    otp_code TEXT NOT NULL,
+    pledge_data TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    used INTEGER NOT NULL DEFAULT 0
+  );
+
   CREATE INDEX IF NOT EXISTS idx_schools_municipality_id ON schools(municipality_id);
   CREATE INDEX IF NOT EXISTS idx_pledges_school ON pledges(school);
+  CREATE INDEX IF NOT EXISTS idx_otp_email ON otp_verifications(email);
 `);
 
 function extractConstLiteral(fileContent, constName) {
@@ -306,6 +317,90 @@ app.post("/api/pledges", (req, res) => {
       return;
     }
 
+    res.status(500).json({ error: "Ekki tókst að vista undirskrift" });
+  }
+});
+
+app.post("/api/otp/request", (req, res) => {
+  const { name, email, sveitarfelag, school, grade, childName } = req.body || {};
+
+  if (!name || !email || !sveitarfelag || !school || !grade) {
+    res.status(400).json({ error: "Vantar skyldureiti" });
+    return;
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+  const now = new Date();
+  const expires = new Date(now.getTime() + 10 * 60 * 1000);
+
+  const pledgeData = JSON.stringify({
+    name: String(name).trim(),
+    email: normalizedEmail,
+    sveitarfelag: String(sveitarfelag).trim(),
+    school: String(school).trim(),
+    grade: parseInt(grade, 10),
+    childName: childName ? String(childName).trim() : null
+  });
+
+  db.prepare("DELETE FROM otp_verifications WHERE email = ? AND used = 0").run(normalizedEmail);
+  db.prepare(
+    "INSERT INTO otp_verifications(email, otp_code, pledge_data, created_at, expires_at, used) VALUES(?, ?, ?, ?, ?, 0)"
+  ).run(normalizedEmail, otp, pledgeData, now.toISOString(), expires.toISOString());
+
+  // Placeholder: print OTP to console for development
+  console.log(`[OTP] Staðfestingarkóði fyrir ${normalizedEmail}: ${otp}`);
+
+  const [user, domain] = normalizedEmail.split("@");
+  const maskedEmail = `${user[0]}***@${domain}`;
+
+  res.json({ ok: true, maskedEmail });
+});
+
+app.post("/api/otp/verify", (req, res) => {
+  const { email, otp } = req.body || {};
+
+  if (!email || !otp) {
+    res.status(400).json({ error: "Vantar netfang eða staðfestingarkóða" });
+    return;
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+  const now = new Date().toISOString();
+
+  const record = db.prepare(
+    "SELECT * FROM otp_verifications WHERE email = ? AND otp_code = ? AND used = 0 AND expires_at > ? ORDER BY created_at DESC LIMIT 1"
+  ).get(normalizedEmail, String(otp).trim(), now);
+
+  if (!record) {
+    res.status(400).json({ error: "Rangt eða útrunnið staðfestingarkóði" });
+    return;
+  }
+
+  db.prepare("UPDATE otp_verifications SET used = 1 WHERE id = ?").run(record.id);
+
+  const pledgeData = JSON.parse(record.pledge_data);
+
+  try {
+    db.prepare(
+      `INSERT INTO pledges(name, email, sveitarfelag, school, grade, child_name, timestamp)
+       VALUES(?, ?, ?, ?, ?, ?, ?)`
+    ).run(
+      pledgeData.name,
+      pledgeData.email,
+      pledgeData.sveitarfelag,
+      pledgeData.school,
+      pledgeData.grade,
+      pledgeData.childName,
+      new Date().toISOString()
+    );
+
+    res.status(201).json({ ok: true });
+  } catch (error) {
+    if (String(error.message).includes("UNIQUE constraint failed")) {
+      res.status(409).json({ error: "Undirskrift er þegar til fyrir þennan bekk" });
+      return;
+    }
     res.status(500).json({ error: "Ekki tókst að vista undirskrift" });
   }
 });
