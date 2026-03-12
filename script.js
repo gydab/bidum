@@ -838,11 +838,98 @@ if (sveitarfelagSelect) {
 }
 
 // ============================================
+// OTP VERIFICATION FLOW
+// ============================================
+let pendingPledge = null;
+
+function showOtpUI(maskedEmail) {
+  const container = document.querySelector(".pledge-form-container");
+  pledgeForm.style.display = "none";
+
+  let otpSection = document.getElementById("otp-section");
+  if (!otpSection) {
+    otpSection = document.createElement("div");
+    otpSection.id = "otp-section";
+    otpSection.className = "otp-section";
+    otpSection.innerHTML = `
+      <div class="otp-header">
+        <h3>Staðfestu netfangið þitt</h3>
+        <p>Við sendum 6 stafa kóða á <strong id="otp-email-display"></strong>.<br>Sláðu hann inn hér til að ljúka við undirskriftina.</p>
+      </div>
+      <div class="otp-form-row">
+        <input type="text" id="otp-input" maxlength="6" placeholder="123456" autocomplete="one-time-code" inputmode="numeric" />
+        <button type="button" id="otp-submit" class="btn btn-primary">Staðfesta</button>
+      </div>
+      <button type="button" id="otp-back" class="btn-link">← Til baka</button>
+    `;
+    container.appendChild(otpSection);
+
+    document.getElementById("otp-submit").addEventListener("click", handleOtpSubmit);
+    document.getElementById("otp-back").addEventListener("click", () => {
+      otpSection.style.display = "none";
+      pledgeForm.style.display = "";
+      pendingPledge = null;
+    });
+    document.getElementById("otp-input").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleOtpSubmit();
+    });
+  }
+
+  document.getElementById("otp-email-display").textContent = maskedEmail;
+  otpSection.style.display = "";
+  document.getElementById("otp-input").value = "";
+  document.getElementById("otp-input").focus();
+}
+
+async function handleOtpSubmit() {
+  const otp = document.getElementById("otp-input").value.trim();
+  if (!otp || otp.length !== 6) {
+    showToast("Sláðu inn 6 stafa kóðann");
+    return;
+  }
+
+  const submitBtn = document.getElementById("otp-submit");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "...";
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/otp/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: pendingPledge.email, otp })
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (response.ok) {
+      // No need to add to local storage - hydratePledgesFromServer will sync from server
+      showToast(`Takk, ${pendingPledge.name}! Þú hefur skrifað undir fyrir ${pendingPledge.school}, ${pendingPledge.grade}. bekk 🛡️`);
+
+      document.getElementById("otp-section").style.display = "none";
+      pledgeForm.style.display = "";
+      pledgeForm.reset();
+      schoolSelect.disabled = true;
+      pendingPledge = null;
+
+      updateTotals();
+      renderSchoolDirectory();
+    } else {
+      showToast(result.error || "Villa við staðfestingu");
+    }
+  } catch {
+    showToast("Villa við staðfestingu. Reyndu aftur.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Staðfesta";
+  }
+}
+
+// ============================================
 // PLEDGE FORM SUBMIT
 // ============================================
 const pledgeForm = document.getElementById("pledge-form");
 if (pledgeForm) {
-  pledgeForm.addEventListener("submit", (e) => {
+  pledgeForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const name = document.getElementById("pledge-name").value.trim();
@@ -857,47 +944,71 @@ if (pledgeForm) {
       return;
     }
 
-    // Check if already pledged for this school+grade
+    // Check if already pledged locally
     const existing = getPledgeData().find(
-      (p) => p.email === email && p.school === school && p.grade === grade
+      (p) => p.email === email.toLowerCase() && p.school === school && p.grade === grade
     );
     if (existing) {
       showToast("Þú hefur þegar skrifað undir fyrir þennan bekk!");
       return;
     }
 
-    addPledge({
-      name,
-      email,
-      sveitarfelag,
-      school,
-      grade,
-      childName: childName || null
-    });
+    const submitBtn = pledgeForm.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
 
-    showToast(
-      `Takk, ${name}! Þú hefur skrifað undir fyrir ${school}, ${grade}. bekk 🛡️`
-    );
-    pledgeForm.reset();
-    schoolSelect.disabled = true;
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/otp/request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, sveitarfelag, school, grade, childName: childName || null })
+      });
 
-    updateTotals();
-    renderSchoolDirectory();
+      const result = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        pendingPledge = { name, email: email.toLowerCase(), sveitarfelag, school, grade, childName: childName || null };
+        showOtpUI(result.maskedEmail);
+      } else {
+        showToast(result.error || "Villa við sendingu. Reyndu aftur.");
+      }
+    } catch {
+      showToast("Ekki náðist samband við þjón. Reyndu aftur.");
+    } finally {
+      submitBtn.disabled = false;
+    }
   });
 }
 
 // ============================================
 // UPDATE TOTALS
 // ============================================
-function updateTotals() {
+function updateTotals(serverStats) {
   const totalPledgesEl = document.getElementById("total-pledges");
   const totalSchoolsEl = document.getElementById("total-schools");
 
-  if (totalPledgesEl) totalPledgesEl.textContent = getTotalPledges();
-  if (totalSchoolsEl) totalSchoolsEl.textContent = getSchoolsWithPledges();
+  if (serverStats) {
+    if (totalPledgesEl) totalPledgesEl.textContent = serverStats.totalPledges;
+    if (totalSchoolsEl) totalSchoolsEl.textContent = serverStats.totalSchools;
+  } else {
+    if (totalPledgesEl) totalPledgesEl.textContent = getTotalPledges();
+    if (totalSchoolsEl) totalSchoolsEl.textContent = getSchoolsWithPledges();
+  }
 }
 
 updateTotals();
+
+async function fetchAndUpdateStats() {
+  try {
+    const response = await fetch(`${apiBaseUrl}/api/pledges/stats`);
+    if (!response.ok) return;
+    const stats = await response.json();
+    updateTotals(stats);
+  } catch {
+    // local fallback
+  }
+}
+
+fetchAndUpdateStats();
 hydratePledgesFromServer();
 
 // ============================================
