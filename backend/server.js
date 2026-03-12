@@ -212,6 +212,15 @@ async function seedSchoolsFromCsvOrFrontend() {
 app.use(cors());
 app.use(express.json());
 
+// Keyrir initDb og seeding við fyrstu beiðni (Vercel serverless)
+let initPromise = null;
+app.use((req, res, next) => {
+  if (!initPromise) {
+    initPromise = initDb().then(() => seedSchoolsFromCsvOrFrontend());
+  }
+  initPromise.then(next).catch(next);
+});
+
 app.get("/api/health", async (_req, res) => {
   const schoolRes = await pool.query("SELECT COUNT(*) as count FROM schools");
   const pledgeRes = await pool.query("SELECT COUNT(*) as count FROM pledges");
@@ -423,15 +432,19 @@ app.post("/api/otp/verify", async (req, res) => {
 const staticRoot = path.resolve(__dirname, "..");
 app.use(express.static(staticRoot));
 
-async function start() {
-  await initDb();
-  await seedSchoolsFromCsvOrFrontend();
-  app.listen(PORT, () => {
-    console.log(`Bíðum backend running on http://localhost:${PORT}`);
-  });
+// Staðbundin þróun
+if (require.main === module) {
+  initDb()
+    .then(() => seedSchoolsFromCsvOrFrontend())
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`Bíðum backend running on http://localhost:${PORT}`);
+      });
+    })
+    .catch((err) => {
+      console.error("Villa við ræsingu:", err);
+      process.exit(1);
+    });
 }
 
-start().catch((err) => {
-  console.error("Villa við ræsingu:", err);
-  process.exit(1);
-});
+module.exports = app;
