@@ -1,60 +1,67 @@
 const express = require("express");
 const cors = require("cors");
-const { DatabaseSync } = require("node:sqlite");
+const { Pool } = require("pg");
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+require("dotenv").config({ path: path.resolve(__dirname, "..", ".env") });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const dataDir = path.join(__dirname, "data");
-const dbPath = path.join(dataDir, "bidum.db");
-fs.mkdirSync(dataDir, { recursive: true });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
-const db = new DatabaseSync(dbPath);
-db.exec("PRAGMA journal_mode = WAL;");
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS municipalities (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE
-  );
-
-  CREATE TABLE IF NOT EXISTS schools (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    municipality_id INTEGER NOT NULL,
-    UNIQUE(name, municipality_id),
-    FOREIGN KEY(municipality_id) REFERENCES municipalities(id)
-  );
-
-  CREATE TABLE IF NOT EXISTS pledges (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    sveitarfelag TEXT NOT NULL,
-    school TEXT NOT NULL,
-    grade INTEGER NOT NULL,
-    child_name TEXT,
-    timestamp TEXT NOT NULL,
-    UNIQUE(email, school, grade)
-  );
-
-  CREATE TABLE IF NOT EXISTS otp_verifications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL,
-    otp_code TEXT NOT NULL,
-    pledge_data TEXT NOT NULL,
-    created_at TEXT NOT NULL,
-    expires_at TEXT NOT NULL,
-    used INTEGER NOT NULL DEFAULT 0
-  );
-
-  CREATE INDEX IF NOT EXISTS idx_schools_municipality_id ON schools(municipality_id);
-  CREATE INDEX IF NOT EXISTS idx_pledges_school ON pledges(school);
-  CREATE INDEX IF NOT EXISTS idx_otp_email ON otp_verifications(email);
-`);
+async function initDb() {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS municipalities (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL UNIQUE
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS schools (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        municipality_id INTEGER NOT NULL REFERENCES municipalities(id),
+        UNIQUE(name, municipality_id)
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS pledges (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        sveitarfelag TEXT NOT NULL,
+        school TEXT NOT NULL,
+        grade INTEGER NOT NULL,
+        child_name TEXT,
+        timestamp TIMESTAMPTZ NOT NULL,
+        UNIQUE(email, school, grade)
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS otp_verifications (
+        id SERIAL PRIMARY KEY,
+        email TEXT NOT NULL,
+        otp_code TEXT NOT NULL,
+        pledge_data TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        used BOOLEAN NOT NULL DEFAULT FALSE
+      )
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_schools_municipality_id ON schools(municipality_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_pledges_school ON pledges(school)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_otp_email ON otp_verifications(email)`);
+  } finally {
+    client.release();
+  }
+}
 
 function extractConstLiteral(fileContent, constName) {
   const re = new RegExp(`const\\s+${constName}\\s*=\\s*([\\s\\S]*?);\\n`, "m");
@@ -131,132 +138,127 @@ function loadSchoolsFromCsv(csvPath) {
   return rows.length ? rows : null;
 }
 
-function seedSchoolsFromFrontend() {
+function getSkolarFromFrontend() {
   const scriptPath = path.resolve(__dirname, "..", "script.js");
-  if (!fs.existsSync(scriptPath)) return;
+  if (!fs.existsSync(scriptPath)) return null;
 
   const scriptContent = fs.readFileSync(scriptPath, "utf8");
   const skolarLiteral = extractConstLiteral(scriptContent, "skolar");
-  if (!skolarLiteral) return;
+  if (!skolarLiteral) return null;
 
-  const skolar = vm.runInNewContext(`(${skolarLiteral})`);
-
-  const insertMunicipality = db.prepare(
-    "INSERT OR IGNORE INTO municipalities(name) VALUES(?)"
-  );
-  const getMunicipalityId = db.prepare(
-    "SELECT id FROM municipalities WHERE name = ?"
-  );
-  const insertSchool = db.prepare(
-    "INSERT OR IGNORE INTO schools(name, municipality_id) VALUES(?, ?)"
-  );
-
-  for (const [municipality, schools] of Object.entries(skolar)) {
-    insertMunicipality.run(municipality);
-    const row = getMunicipalityId.get(municipality);
-    if (!row) continue;
-
-    for (const school of schools) {
-      insertSchool.run(String(school).trim(), row.id);
-    }
-  }
+  return vm.runInNewContext(`(${skolarLiteral})`);
 }
 
-function seedSchoolsFromCsvOrFrontend() {
+async function seedSchoolsFromCsvOrFrontend() {
+  const { rows } = await pool.query("SELECT COUNT(*) as count FROM municipalities");
+  if (parseInt(rows[0].count, 10) > 0) return;
+
   const csvPath = path.resolve(__dirname, "..", "skolar.csv");
   const csvRows = loadSchoolsFromCsv(csvPath);
 
-  const insertMunicipality = db.prepare(
-    "INSERT OR IGNORE INTO municipalities(name) VALUES(?)"
-  );
-  const getMunicipalityId = db.prepare(
-    "SELECT id FROM municipalities WHERE name = ?"
-  );
-  const insertSchool = db.prepare(
-    "INSERT OR IGNORE INTO schools(name, municipality_id) VALUES(?, ?)"
-  );
-
-  db.exec("BEGIN");
+  const client = await pool.connect();
   try {
-    db.prepare("DELETE FROM schools").run();
-    db.prepare("DELETE FROM municipalities").run();
+    await client.query("BEGIN");
 
     if (csvRows) {
       for (const row of csvRows) {
-        insertMunicipality.run(row.municipality);
-        const municipalityRow = getMunicipalityId.get(row.municipality);
-        if (!municipalityRow) continue;
-        insertSchool.run(row.school, municipalityRow.id);
+        await client.query(
+          "INSERT INTO municipalities(name) VALUES($1) ON CONFLICT DO NOTHING",
+          [row.municipality]
+        );
+        const mRes = await client.query(
+          "SELECT id FROM municipalities WHERE name = $1",
+          [row.municipality]
+        );
+        if (!mRes.rows[0]) continue;
+        await client.query(
+          "INSERT INTO schools(name, municipality_id) VALUES($1, $2) ON CONFLICT DO NOTHING",
+          [row.school, mRes.rows[0].id]
+        );
       }
     } else {
-      seedSchoolsFromFrontend();
+      const skolar = getSkolarFromFrontend();
+      if (skolar) {
+        for (const [municipality, schools] of Object.entries(skolar)) {
+          await client.query(
+            "INSERT INTO municipalities(name) VALUES($1) ON CONFLICT DO NOTHING",
+            [municipality]
+          );
+          const mRes = await client.query(
+            "SELECT id FROM municipalities WHERE name = $1",
+            [municipality]
+          );
+          if (!mRes.rows[0]) continue;
+          for (const school of schools) {
+            await client.query(
+              "INSERT INTO schools(name, municipality_id) VALUES($1, $2) ON CONFLICT DO NOTHING",
+              [String(school).trim(), mRes.rows[0].id]
+            );
+          }
+        }
+      }
     }
 
-    db.exec("COMMIT");
+    await client.query("COMMIT");
+    console.log("Skólar hlaðnir inn í gagnagrunn");
   } catch (error) {
-    db.exec("ROLLBACK");
+    await client.query("ROLLBACK");
     throw error;
+  } finally {
+    client.release();
   }
 }
-
-seedSchoolsFromCsvOrFrontend();
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/health", (_req, res) => {
-  const schoolCount = db.prepare("SELECT COUNT(*) as count FROM schools").get().count;
-  const pledgeCount = db.prepare("SELECT COUNT(*) as count FROM pledges").get().count;
-
-  res.json({ ok: true, schoolCount, pledgeCount });
+app.get("/api/health", async (_req, res) => {
+  const schoolRes = await pool.query("SELECT COUNT(*) as count FROM schools");
+  const pledgeRes = await pool.query("SELECT COUNT(*) as count FROM pledges");
+  res.json({
+    ok: true,
+    schoolCount: parseInt(schoolRes.rows[0].count, 10),
+    pledgeCount: parseInt(pledgeRes.rows[0].count, 10)
+  });
 });
 
-app.get("/api/municipalities", (_req, res) => {
-  const rows = db
-    .prepare("SELECT name FROM municipalities ORDER BY name COLLATE NOCASE")
-    .all();
+app.get("/api/municipalities", async (_req, res) => {
+  const { rows } = await pool.query("SELECT name FROM municipalities ORDER BY name");
   res.json(rows.map((r) => r.name));
 });
 
-app.get("/api/schools", (req, res) => {
+app.get("/api/schools", async (req, res) => {
   const municipality = (req.query.municipality || "").toString().trim();
 
   if (municipality) {
-    const rows = db
-      .prepare(
-        `SELECT s.name
-         FROM schools s
-         JOIN municipalities m ON m.id = s.municipality_id
-         WHERE m.name = ?
-         ORDER BY s.name COLLATE NOCASE`
-      )
-      .all(municipality);
-
+    const { rows } = await pool.query(
+      `SELECT s.name
+       FROM schools s
+       JOIN municipalities m ON m.id = s.municipality_id
+       WHERE m.name = $1
+       ORDER BY s.name`,
+      [municipality]
+    );
     res.json(rows.map((r) => r.name));
     return;
   }
 
-  const rows = db
-    .prepare(
-      `SELECT s.name, m.name as municipality
-       FROM schools s
-       JOIN municipalities m ON m.id = s.municipality_id
-       ORDER BY m.name COLLATE NOCASE, s.name COLLATE NOCASE`
-    )
-    .all();
-
+  const { rows } = await pool.query(
+    `SELECT s.name, m.name as municipality
+     FROM schools s
+     JOIN municipalities m ON m.id = s.municipality_id
+     ORDER BY m.name, s.name`
+  );
   res.json(rows);
 });
 
-app.get("/api/schools/tree", (_req, res) => {
-  const rows = db
-    .prepare(
-      `SELECT s.name, m.name as municipality
-       FROM schools s
-       JOIN municipalities m ON m.id = s.municipality_id
-       ORDER BY m.name COLLATE NOCASE, s.name COLLATE NOCASE`
-    )
-    .all();
+app.get("/api/schools/tree", async (_req, res) => {
+  const { rows } = await pool.query(
+    `SELECT s.name, m.name as municipality
+     FROM schools s
+     JOIN municipalities m ON m.id = s.municipality_id
+     ORDER BY m.name, s.name`
+  );
 
   const tree = {};
   rows.forEach((row) => {
@@ -267,28 +269,25 @@ app.get("/api/schools/tree", (_req, res) => {
   res.json(tree);
 });
 
-app.get("/api/pledges", (_req, res) => {
-  const rows = db
-    .prepare(
-      `SELECT sveitarfelag, school, grade, timestamp
-       FROM pledges
-       ORDER BY timestamp DESC`
-    )
-    .all();
-
+app.get("/api/pledges", async (_req, res) => {
+  const { rows } = await pool.query(
+    `SELECT sveitarfelag, school, grade, timestamp
+     FROM pledges
+     ORDER BY timestamp DESC`
+  );
   res.json(rows);
 });
 
-app.get("/api/pledges/stats", (_req, res) => {
-  const totalPledges = db.prepare("SELECT COUNT(*) as count FROM pledges").get().count;
-  const totalSchools = db
-    .prepare("SELECT COUNT(DISTINCT school) as count FROM pledges")
-    .get().count;
-
-  res.json({ totalPledges, totalSchools });
+app.get("/api/pledges/stats", async (_req, res) => {
+  const totalRes = await pool.query("SELECT COUNT(*) as count FROM pledges");
+  const schoolRes = await pool.query("SELECT COUNT(DISTINCT school) as count FROM pledges");
+  res.json({
+    totalPledges: parseInt(totalRes.rows[0].count, 10),
+    totalSchools: parseInt(schoolRes.rows[0].count, 10)
+  });
 });
 
-app.post("/api/pledges", (req, res) => {
+app.post("/api/pledges", async (req, res) => {
   const { name, email, sveitarfelag, school, grade, childName, timestamp } = req.body || {};
 
   if (!name || !email || !sveitarfelag || !school || !grade) {
@@ -297,31 +296,30 @@ app.post("/api/pledges", (req, res) => {
   }
 
   try {
-    db.prepare(
+    await pool.query(
       `INSERT INTO pledges(name, email, sveitarfelag, school, grade, child_name, timestamp)
-       VALUES(?, ?, ?, ?, ?, ?, ?)`
-    ).run(
-      String(name).trim(),
-      String(email).trim().toLowerCase(),
-      String(sveitarfelag).trim(),
-      String(school).trim(),
-      parseInt(grade, 10),
-      childName ? String(childName).trim() : null,
-      timestamp || new Date().toISOString()
+       VALUES($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        String(name).trim(),
+        String(email).trim().toLowerCase(),
+        String(sveitarfelag).trim(),
+        String(school).trim(),
+        parseInt(grade, 10),
+        childName ? String(childName).trim() : null,
+        timestamp || new Date().toISOString()
+      ]
     );
-
     res.status(201).json({ ok: true });
   } catch (error) {
-    if (String(error.message).includes("UNIQUE constraint failed")) {
+    if (error.code === "23505") {
       res.status(409).json({ error: "Undirskrift er þegar til fyrir þennan bekk" });
       return;
     }
-
     res.status(500).json({ error: "Ekki tókst að vista undirskrift" });
   }
 });
 
-app.post("/api/otp/request", (req, res) => {
+app.post("/api/otp/request", async (req, res) => {
   const { name, email, sveitarfelag, school, grade, childName } = req.body || {};
 
   if (!name || !email || !sveitarfelag || !school || !grade) {
@@ -330,6 +328,12 @@ app.post("/api/otp/request", (req, res) => {
   }
 
   const normalizedEmail = String(email).trim().toLowerCase();
+  const parts = normalizedEmail.split("@");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
+    res.status(400).json({ error: "Ógilt netfang" });
+    return;
+  }
+
   const otp = String(Math.floor(100000 + Math.random() * 900000));
   const now = new Date();
   const expires = new Date(now.getTime() + 10 * 60 * 1000);
@@ -343,26 +347,26 @@ app.post("/api/otp/request", (req, res) => {
     childName: childName ? String(childName).trim() : null
   });
 
-  db.prepare("DELETE FROM otp_verifications WHERE email = ? AND used = 0").run(normalizedEmail);
-  db.prepare(
-    "INSERT INTO otp_verifications(email, otp_code, pledge_data, created_at, expires_at, used) VALUES(?, ?, ?, ?, ?, 0)"
-  ).run(normalizedEmail, otp, pledgeData, now.toISOString(), expires.toISOString());
+  await pool.query(
+    "DELETE FROM otp_verifications WHERE email = $1 AND used = FALSE",
+    [normalizedEmail]
+  );
+  await pool.query(
+    `INSERT INTO otp_verifications(email, otp_code, pledge_data, created_at, expires_at, used)
+     VALUES($1, $2, $3, $4, $5, FALSE)`,
+    [normalizedEmail, otp, pledgeData, now.toISOString(), expires.toISOString()]
+  );
 
-  // Placeholder: print OTP to console for development
+  // Placeholder: prenta OTP í terminal
   console.log(`[OTP] Staðfestingarkóði fyrir ${normalizedEmail}: ${otp}`);
 
-  const parts = normalizedEmail.split("@");
-  if (parts.length !== 2 || !parts[0] || !parts[1]) {
-    res.status(400).json({ error: "Ógilt netfang" });
-    return;
-  }
   const [user, domain] = parts;
   const maskedEmail = `${user[0]}***@${domain}`;
 
   res.json({ ok: true, maskedEmail });
 });
 
-app.post("/api/otp/verify", (req, res) => {
+app.post("/api/otp/verify", async (req, res) => {
   const { email, otp } = req.body || {};
 
   if (!email || !otp) {
@@ -373,36 +377,42 @@ app.post("/api/otp/verify", (req, res) => {
   const normalizedEmail = String(email).trim().toLowerCase();
   const now = new Date().toISOString();
 
-  const record = db.prepare(
-    "SELECT * FROM otp_verifications WHERE email = ? AND otp_code = ? AND used = 0 AND expires_at > ? ORDER BY created_at DESC LIMIT 1"
-  ).get(normalizedEmail, String(otp).trim(), now);
+  const { rows } = await pool.query(
+    `SELECT * FROM otp_verifications
+     WHERE email = $1 AND otp_code = $2 AND used = FALSE AND expires_at > $3
+     ORDER BY created_at DESC LIMIT 1`,
+    [normalizedEmail, String(otp).trim(), now]
+  );
 
-  if (!record) {
+  if (!rows[0]) {
     res.status(400).json({ error: "Rangt eða útrunnið staðfestingarkóði" });
     return;
   }
 
-  db.prepare("UPDATE otp_verifications SET used = 1 WHERE id = ?").run(record.id);
+  await pool.query(
+    "UPDATE otp_verifications SET used = TRUE WHERE id = $1",
+    [rows[0].id]
+  );
 
-  const pledgeData = JSON.parse(record.pledge_data);
+  const pledgeData = JSON.parse(rows[0].pledge_data);
 
   try {
-    db.prepare(
+    await pool.query(
       `INSERT INTO pledges(name, email, sveitarfelag, school, grade, child_name, timestamp)
-       VALUES(?, ?, ?, ?, ?, ?, ?)`
-    ).run(
-      pledgeData.name,
-      pledgeData.email,
-      pledgeData.sveitarfelag,
-      pledgeData.school,
-      pledgeData.grade,
-      pledgeData.childName,
-      new Date().toISOString()
+       VALUES($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        pledgeData.name,
+        pledgeData.email,
+        pledgeData.sveitarfelag,
+        pledgeData.school,
+        pledgeData.grade,
+        pledgeData.childName,
+        new Date().toISOString()
+      ]
     );
-
     res.status(201).json({ ok: true });
   } catch (error) {
-    if (String(error.message).includes("UNIQUE constraint failed")) {
+    if (error.code === "23505") {
       res.status(409).json({ error: "Undirskrift er þegar til fyrir þennan bekk" });
       return;
     }
@@ -413,6 +423,15 @@ app.post("/api/otp/verify", (req, res) => {
 const staticRoot = path.resolve(__dirname, "..");
 app.use(express.static(staticRoot));
 
-app.listen(PORT, () => {
-  console.log(`Bíðum backend running on http://localhost:${PORT}`);
+async function start() {
+  await initDb();
+  await seedSchoolsFromCsvOrFrontend();
+  app.listen(PORT, () => {
+    console.log(`Bíðum backend running on http://localhost:${PORT}`);
+  });
+}
+
+start().catch((err) => {
+  console.error("Villa við ræsingu:", err);
+  process.exit(1);
 });
