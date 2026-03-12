@@ -351,7 +351,12 @@ app.post("/api/otp/request", (req, res) => {
   // Placeholder: print OTP to console for development
   console.log(`[OTP] Staðfestingarkóði fyrir ${normalizedEmail}: ${otp}`);
 
-  const [user, domain] = normalizedEmail.split("@");
+  const parts = normalizedEmail.split("@");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) {
+    res.status(400).json({ error: "Ógilt netfang" });
+    return;
+  }
+  const [user, domain] = parts;
   const maskedEmail = `${user[0]}***@${domain}`;
 
   res.json({ ok: true, maskedEmail });

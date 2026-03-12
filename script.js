@@ -902,11 +902,7 @@ async function handleOtpSubmit() {
     const result = await response.json().catch(() => ({}));
 
     if (response.ok) {
-      const savedPledge = { ...pendingPledge, timestamp: new Date().toISOString() };
-      const data = getPledgeData();
-      data.push(savedPledge);
-      savePledgeData(data);
-
+      // No need to add to local storage - hydratePledgesFromServer will sync from server
       showToast(`Takk, ${pendingPledge.name}! Þú hefur skrifað undir fyrir ${pendingPledge.school}, ${pendingPledge.grade}. bekk 🛡️`);
 
       document.getElementById("otp-section").style.display = "none";
